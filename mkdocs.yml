@@ -2,6 +2,10 @@ site_name: MkDocs Macros Utils Documentation
 site_description: Documentation and examples for mkdocs-macros-utils plugin
 site_url: https://7rikazhexde.github.io/mkdocs-macros-utils/
 site_author: 7rikazhexde
+repo_name: 7rikazhexde/mkdocs-macros-utils
+repo_url: https://github.com/7rikazhexde/mkdocs-macros-utils/
+copyright: "&copy; 2025 7rikazhexde"
+
 theme:
   name: material
   custom_dir: overrides
