@@ -1,6 +1,6 @@
-# MkDocs Macros Cards
+# mkdocs-macros-utils
 
-MkDocs Macros Cards is a plugin that provides enhanced card and code block functionality for MkDocs.
+MkDocs Macros provides macros to enhance cards, code blocks, etc. in MkDocs documents.
 
 ## Features
 
