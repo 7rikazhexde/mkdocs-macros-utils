@@ -2,6 +2,8 @@
 
 MkDocs Macros provides macros to enhance cards, code blocks, etc. in MkDocs documents.
 
+[![pages-build-deployment](https://github.com/7rikazhexde/mkdocs-macros-utils/actions/workflows/pages/pages-build-deployment/badge.svg?branch=gh-pages)](https://github.com/7rikazhexde/mkdocs-macros-utils/actions/workflows/pages/pages-build-deployment) [![DOCS](https://img.shields.io/badge/Docs-Click%20Here-blue?colorA=24292e&colorB=0366d6&logo=github)]((https://github.com/7rikazhexde/python-project-sandbox/tree/ghpages?tab=readme-ov-file#pytest-report))
+
 ## Features
 
 - Gist Code Block: Embed and syntax-highlight code from GitHub Gists
