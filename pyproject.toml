@@ -1,6 +1,6 @@
 [project]
 name = "mkdocs-macros-utils"
-version = "0.2.0"
+version = "0.0.2"
 description = "MkDocs Macros plugin for creating enhanced cards and code blocks"
 authors = [
     {name = "7rikazhexde", email = "33836132+7rikazhexde@users.noreply.github.com"}
