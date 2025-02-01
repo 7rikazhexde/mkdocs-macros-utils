@@ -142,12 +142,19 @@ def create_link_card(
     display_domain = domain or extract_domain_for_display(url)
     description = description or ""
 
+    # Get the base URL of the site
+    base_url = ""
+    if env and hasattr(env, "conf"):
+        base_url = env.conf.get("site_url", "")
+
     # Determine image path
     if external and not image_path:
         final_image_path = ""
         logger.log("External link without image")
     else:
-        final_image_path = image_path or "/assets/img/site.png"
+        # Combine base URL and path
+        default_image = "assets/img/site.png"
+        final_image_path = image_path or f"{base_url.rstrip('/')}/{default_image}"
         logger.log(f"Image path: {final_image_path}")
 
     # Get and process SVG content

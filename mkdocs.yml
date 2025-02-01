@@ -1,5 +1,6 @@
 site_name: MkDocs Macros Utils Documentation
 site_description: Documentation and examples for mkdocs-macros-utils plugin
+site_url: https://7rikazhexde.github.io/mkdocs-macros-utils/
 site_author: 7rikazhexde
 theme:
   name: material
@@ -82,7 +83,7 @@ extra:
     - icon: fontawesome/solid/blog
       link: https://7rikazhexde-pkm-obsidian-mkdocs.netlify.app
   debug:
-    link_card: false
+    link_card: true
     gist_codeblock: false
     x_twitter_card: false
 
