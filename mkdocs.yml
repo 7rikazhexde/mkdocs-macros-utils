@@ -1,0 +1,95 @@
+site_name: MkDocs Macros Utils Documentation
+site_description: Documentation and examples for mkdocs-macros-utils plugin
+site_author: 7rikazhexde
+theme:
+  name: material
+  custom_dir: overrides
+  palette:
+    # Light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: teal
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - content.code.copy
+    - content.code.select
+    - content.code.annotate
+    #- navigation.instant
+    - navigation.indexes
+    - navigation.sections
+    - navigation.top
+    # - navigation.tracking
+    #- navigation.expand
+
+plugins:
+  - search
+  - macros:
+      modules: [mkdocs_macros_utils]
+  #- tags
+
+markdown_extensions:
+  - footnotes
+    # For Admonition
+  - admonition
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+    # For Code Blocks
+  - pymdownx.highlight:
+      #use_pygments: true
+      #noclasses: true
+      #pygments_style: monokai
+      linenums: true
+    #- pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.snippets
+    # For Emoji
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - toc:
+      permalink: true
+    # For Meta Tag(Relate: Twitter Cards/OGP)
+  - meta
+  - md_in_html
+  - attr_list
+
+nav:
+  - Home: index.md
+  - Examples:
+    - examples/index.md
+    - Link Card: examples/link-card-macro.md
+    - Gist Code Block: examples/gist-codeblock-macro.md
+    - X/Twitter Card: examples/x-twitter-card-macro.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github-alt
+      link: https://github.com/7rikazhexde
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/tw_7rikazhexde
+    - icon: fontawesome/solid/blog
+      link: https://7rikazhexde-pkm-obsidian-mkdocs.netlify.app
+  debug:
+    link_card: false
+    gist_codeblock: false
+    x_twitter_card: false
+
+extra_css:
+  - stylesheets/macros-utils/link-card.css
+  - stylesheets/macros-utils/gist-cb.css
+  - stylesheets/macros-utils/x-twitter-link-card.css
+
+extra_javascript:
+  - javascripts/macros-utils/x-twitter-widget.js

@@ -1,0 +1,20 @@
+# dev
+.DS_Store
+.venv
+
+# python cache
+*.pyc
+__pycache__/
+
+# static code analysis
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# mkdocs
+site/
+
+# node
+.yarn
