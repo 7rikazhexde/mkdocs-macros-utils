@@ -29,6 +29,8 @@
 
   "MD028": false,
 
+  "MD029": false,
+
   // Inline HTML / raw HTMLの記入
   // MD009を無効にする変わりに改行に<br/>を使用するため無効にする。
   "MD033": false,

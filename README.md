@@ -29,18 +29,18 @@ Currently, the package can be installed from GitHub using Poetry:
     poetry add "mkdocs-macros-utils@git+https://github.com/7rikazhexde/mkdocs-macros-utils.git@main"
     ```
 
-    > [!NOTE]
-    > I plan to make this package available via pip in the future.
+> [!NOTE]
+> I plan to make this package available via pip in the future.
 
-    > [!TIP]
-    > To reflect the latest code, remove mkdocs-macros-utils once and then add it again.
-    >
-    > ```bash
-    >  poetry remove mkdocs-macros-utils
-    >  poetry add "mkdocs-macros-utils@git+https://github.com/7rikazhexde/mkdocs-macros-utils.git#main"
-    > ```
+> [!TIP]
+> To reflect the latest code, remove mkdocs-macros-utils once and then add it again.
+>
+> ```bash
+>  poetry remove mkdocs-macros-utils
+>  poetry add "mkdocs-macros-utils@git+https://github.com/7rikazhexde/mkdocs-macros-utils.git#main"
+> ```
 
-1. Install using Poetry
+2. Install using Poetry
 
     ```bash
     poetry install
