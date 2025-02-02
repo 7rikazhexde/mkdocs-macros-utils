@@ -1,14 +1,14 @@
 # mkdocs-macros-utils
 
-MkDocs Macros provides macros to enhance cards, code blocks, etc. in MkDocs documents.
+`mkdocs-macros-utils` is [mkdocs-macros-plugin](https://mkdocs-macros-plugin.readthedocs.io/en/latest/) based project that provides macros to extend cards, code blocks, etc, in MkDocs documents.
 
 [![pages-build-deployment](https://github.com/7rikazhexde/mkdocs-macros-utils/actions/workflows/pages/pages-build-deployment/badge.svg?branch=gh-pages)](https://github.com/7rikazhexde/mkdocs-macros-utils/actions/workflows/pages/pages-build-deployment) [![DOCS](https://img.shields.io/badge/Docs-Click%20Here-blue?colorA=24292e&colorB=0366d6&logo=github)](https://7rikazhexde.github.io/mkdocs-macros-utils/)
 
 ## Features
 
-- Gist Code Block: Embed and syntax-highlight code from GitHub Gists
-- Link Card: Create attractive link cards with images and descriptions
-- X/Twitter Card: Embed tweets with proper styling and dark mode support
+- **Link Card**: Create link cards with images and descriptions, etc
+- **Gist Code Block**: Embed and syntax-highlight code from GitHub Gists
+- **X/Twitter Card**: Embed tweets with proper styling and dark mode support
 
 ## Installation
 
