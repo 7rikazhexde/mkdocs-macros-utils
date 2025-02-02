@@ -14,7 +14,7 @@ description: Documentation showing a macro for creating custom link card macros 
 
 This section describes a macro to display custom link cards in Mkdocs.
 
-!!! note "This macro is assumed to be used with [Material for Mkdocs](https://squidfunk.github.io/mkdocs-material/)."
+!!! info "This macro is assumed to be used with [Material for Mkdocs](https://squidfunk.github.io/mkdocs-material/)."
 
 ## Usage
 
@@ -38,7 +38,7 @@ Create a link card based on the css settings and the values specified in the par
 
 #### Examples of links within the site
 
-??? info "How to specify minimum parameters"
+??? tip "How to specify minimum parameters"
 
     !!! tip
 
@@ -72,7 +72,7 @@ Create a link card based on the css settings and the values specified in the par
 For links to GitHub repositories, the GitHub icon is automatically displayed by default.
 If you want to display a custom SVG icon, specify the Gist path in the `svg_path` parameter.
 
-??? info "How to specify a GitHub repository"
+??? tip "How to specify a GitHub repository"
 
     ```markdown
     {% raw %}
@@ -103,7 +103,7 @@ If you want to display a custom SVG icon, specify the Gist path in the `svg_path
     external=True
 ) }}
 
-??? info "How to designate SVG as the icon for card links"
+??? tip "How to designate SVG as the icon for card links"
 
     !!! tip "About the SVG file to be used"
 
@@ -152,7 +152,7 @@ If you want to display a custom SVG icon, specify the Gist path in the `svg_path
 
 If the link is to a Hatena Blog post, the Hatena Blog logo will automatically be displayed.
 
-??? info "How to specify a Hatena blog post"
+??? tip "How to specify a Hatena blog post"
 
     ```markdown
     {% raw %}
@@ -188,7 +188,7 @@ If the link is to a Hatena Blog post, the Hatena Blog logo will automatically be
 
 For websites other than those listed above, icons are not displayed on card links by default.
 
-??? info "How to specify other Web sites"
+??? tip "How to specify other Web sites"
 
     ```markdown
     {% raw %}

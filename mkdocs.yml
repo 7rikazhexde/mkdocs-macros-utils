@@ -10,13 +10,13 @@ theme:
   name: material
   custom_dir: overrides
   palette:
-    # Light mode
+    # Light Mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
       primary: teal
       accent: teal
       toggle:
-        icon: material/brightness-7
+        icon: material/weather-sunny
         name: Switch to dark mode
     # Dark mode
     - media: "(prefers-color-scheme: dark)"
@@ -24,7 +24,7 @@ theme:
       primary: teal
       accent: teal
       toggle:
-        icon: material/brightness-4
+        icon: material/weather-night
         name: Switch to light mode
   features:
     - content.code.copy

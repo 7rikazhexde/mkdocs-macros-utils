@@ -12,35 +12,61 @@ MkDocs Macros provides macros to enhance cards, code blocks, etc. in MkDocs docu
 
 ## Installation
 
-```bash
-cd your_mkdocs_project
-git clone https://github.com/7rikazhexde/mkdocs-macros-utils.git
-cd mkdocs-macros-utils
-poetry install
-cd ../
-poetry run mkdocs serve
-```
+Currently, the package can be installed from GitHub using Poetry:
+
+1. Add the dependency to your project's `pyproject.toml`
+
+    ```toml
+    [project]
+    dependencies = [
+        "mkdocs-macros-utils @ git+https://github.com/7rikazhexde/mkdocs-macros-utils.git#main"
+    ]
+    ```
+
+    > [!NOTE]
+    > I plan to make this package available via pip in the future.
+
+1. Install using Poetry
+
+    ```bash
+    poetry install
+    ```
 
 ## Usage
 
-Add the plugin to your `mkdocs.yml`
+1. Add the plugin to your `mkdocs.yml`
 
-```yaml
-plugins:
-  - macros:
-      modules: [mkdocs_macros_utils]
+    ```yaml
+    plugins:
+      - macros:
+          modules: [mkdocs_macros_utils]
 
-extra_css:
-  - stylesheets/macros-utils/link-card.css
-  - stylesheets/macros-utils/gist-cb.css
-  - stylesheets/macros-utils/x-twitter-link-card.css
+    markdown_extensions:
+      - attr_list
+      - md_in_html
 
-extra_javascript:
-  - javascripts/macros-utils/x-twitter-widget.js
-```
+    extra:
+      debug:
+        link_card: false  # Set to true for debug logging
+        gist_codeblock: false
+        x_twitter_card: false
 
-Run `poetry run mkdocs serve`.  
-Files required before the build are copied under docs and the server is started.
+    extra_css:
+      - stylesheets/macros-utils/link-card.css
+      - stylesheets/macros-utils/gist-cb.css
+      - stylesheets/macros-utils/x-twitter-link-card.css
+
+    extra_javascript:
+      - javascripts/macros-utils/x-twitter-widget.js
+    ```
+
+1. Start the development server
+
+    ```bash
+    poetry run mkdocs serve
+    ```
+
+The plugin will automatically create the required directories and copy CSS/JS files during the build process.
 
 ## Documentation
 

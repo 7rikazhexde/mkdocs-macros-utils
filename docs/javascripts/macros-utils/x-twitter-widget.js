@@ -1,4 +1,3 @@
-// docs/javascripts/x-twitter-widget.js
 (function() {
     // デバッグモードの設定
     const DEBUG = true; // この値を true に変更するとデバッグログが有効になります
