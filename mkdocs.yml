@@ -87,7 +87,7 @@ extra:
     - icon: fontawesome/solid/blog
       link: https://7rikazhexde-pkm-obsidian-mkdocs.netlify.app
   debug:
-    link_card: true
+    link_card: false
     gist_codeblock: false
     x_twitter_card: false
 

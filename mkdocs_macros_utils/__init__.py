@@ -14,7 +14,7 @@ from . import link_card
 from . import gist_codeblock
 from . import x_twitter_card
 
-logger = logging.getLogger("mkdocs.plugins.macros-macros-utils")
+logger = logging.getLogger("mkdocs.plugins.macros-utils")
 
 MACROS_UTILS_DIR = "stylesheets/macros-utils"
 MACROS_UTILS_CSS = ["link-card.css", "gist-cb.css", "x-twitter-link-card.css"]

@@ -31,5 +31,4 @@ module = ["mkdocs.*","mkdocs_macros.*","jinja2.*","ruamel.*","pygments.*"]
 ignore_missing_imports = true
 
 [project.entry-points."mkdocs.plugins"]
-"macros-macros-utils" = "mkdocs_macros_utils"
-version = "0.1.0"
+"macros-utils" = "mkdocs_macros_utils:define_env"

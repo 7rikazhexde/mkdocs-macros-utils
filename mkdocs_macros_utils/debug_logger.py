@@ -67,9 +67,7 @@ class DebugLogger:
             module_name (str): Module name
             enabled (bool, optional): enable or disable debug logging. Defaults to False.
         """
-        self.logger = logging.getLogger(
-            f"mkdocs.plugins.macros-macros-utils.{module_name}"
-        )
+        self.logger = logging.getLogger(f"mkdocs.plugins.macros-utils.{module_name}")
         self.logger.setLevel(logging.DEBUG if enabled else logging.WARNING)
         self.enabled = enabled
 
