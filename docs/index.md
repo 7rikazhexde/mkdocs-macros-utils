@@ -17,11 +17,24 @@ Currently, the package can be installed from GitHub using Poetry:
     ```toml
     [project]
     dependencies = [
-        "mkdocs-macros-utils @ git+https://github.com/7rikazhexde/mkdocs-macros-utils.git#main"
+        "mkdocs-macros-utils@git+https://github.com/7rikazhexde/mkdocs-macros-utils.git@main"
     ]
     ```
 
+    or
+
+    ```bash
+    poetry add "mkdocs-macros-utils@git+https://github.com/7rikazhexde/mkdocs-macros-utils.git@main"
+    ```
+
     !!! info "I plan to make this package available via pip in the future."
+
+    !!! tip "To reflect the latest code, remove mkdocs-macros-utils once and then add it again."
+
+        ```bash
+        poetry remove mkdocs-macros-utils
+        poetry add "mkdocs-macros-utils@git+https://github.com/7rikazhexde/mkdocs-macros-utils.git#main"
+        ```
 
 1. Install using Poetry
 
