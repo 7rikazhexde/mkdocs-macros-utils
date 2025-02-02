@@ -11,11 +11,14 @@ from mkdocs_macros.plugin import MacrosPlugin
 from .debug_logger import DebugLogger
 
 
-def get_gist_content(gist_id: str, filename: str, logger: DebugLogger) -> Optional[str]:
+def get_gist_content(
+    user_id: str, gist_id: str, filename: str, logger: DebugLogger
+) -> Optional[str]:
     """
     Fetch content from a Gist
 
     Args:
+        user_id (str): GitHub user ID
         gist_id (str): Gist ID
         filename (str): Filename
         logger (DebugLogger): Debug logger
@@ -23,9 +26,11 @@ def get_gist_content(gist_id: str, filename: str, logger: DebugLogger) -> Option
     Returns:
         Optional[str]: SVG content or None
     """
-    logger.log(f"Fetching Gist content: ID={gist_id}, Filename={filename}")
+    logger.log(
+        f"Fetching Gist content: User={user_id}, ID={gist_id}, Filename={filename}"
+    )
     try:
-        url = f"https://gist.githubusercontent.com/7rikazhexde/{gist_id}/raw/{filename}"
+        url = f"https://gist.githubusercontent.com/{user_id}/{gist_id}/raw/{filename}"
         response = requests.get(url)
         if response.status_code == 200:
             logger.log("Gist content fetched successfully")
@@ -52,12 +57,18 @@ def get_svg_content(url: str, logger: DebugLogger) -> Optional[str]:
     if "github.com" in url:
         logger.log("Using GitHub SVG")
         return get_gist_content(
-            "d418315080179e7c1bd9a7a4366b81f6", "github-cutom-icon.svg", logger
+            "7rikazhexde",
+            "d418315080179e7c1bd9a7a4366b81f6",
+            "github-cutom-icon.svg",
+            logger,
         )
     elif "hatenablog.com" in url:
         logger.log("Using Hatena Blog SVG")
         return get_gist_content(
-            "1b1079ee3793f9223173347b0bc6ab3b", "hatenablog-logotype.svg", logger
+            "7rikazhexde",
+            "1b1079ee3793f9223173347b0bc6ab3b",
+            "hatenablog-logotype.svg",
+            logger,
         )
     logger.log("No matching SVG found")
     return None
@@ -122,7 +133,7 @@ def create_link_card(
         image_path (Optional[str], optional): Image path. Defaults to None.
         domain (Optional[str], optional): Domain name. Auto-extracted from URL if not specified.
         external (bool, optional): External link flag. Defaults to False.
-        svg_path (Optional[str], optional): Custom SVG path. Defaults to None.
+        svg_path (Optional[str], optional): Custom SVG path in format "user_id/gist_id/filename". Defaults to None.
         env (Optional[MacrosPlugin], optional): MkDocs macro environment. Defaults to None.
 
     Returns:
@@ -161,9 +172,24 @@ def create_link_card(
     svg_content = None
     if svg_path:
         logger.log(f"Using custom SVG path: {svg_path}")
-        svg_content = get_gist_content(
-            svg_path.split("/")[0], svg_path.split("/")[1], logger
-        )
+        parts = svg_path.split("/")  # 形式: "user_id/gist_id/filename"
+        if len(parts) != 3:
+            logger.log(
+                "Error: Invalid SVG path format. Expected: user_id/gist_id/filename"
+            )
+            error_html = f'''
+<div class="custom-link-card" onclick="window.location='{clean_target_url}'" role="link" tabindex="0">
+    <div class="custom-link-card-content">
+        <div class="custom-link-card-title" aria-label="{title}">{title}</div>
+        <div class="custom-link-card-description">Error: Invalid SVG path format</div>
+        <a href="{clean_target_url}" class="custom-link-card-domain">{display_domain}</a>
+    </div>
+</div>
+'''
+            return error_html
+
+        user_id, gist_id, filename = parts
+        svg_content = get_gist_content(user_id, gist_id, filename, logger)
     else:
         svg_content = get_svg_content(clean_target_url, logger)
 
@@ -231,7 +257,7 @@ def define_env(env: MacrosPlugin) -> None:
             image_path (Optional[str], optional): Image path. Defaults to None.
             domain (Optional[str], optional): Domain name. Defaults to None.
             external (bool, optional): External link flag. Defaults to False.
-            svg_path (Optional[str], optional): Custom SVG path. Defaults to None.
+            svg_path (Optional[str], optional): Custom SVG path in format "user_id/gist_id/filename". Defaults to None.
 
         Returns:
             str: Rendered link card HTML

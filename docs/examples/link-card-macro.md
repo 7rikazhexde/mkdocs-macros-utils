@@ -123,7 +123,7 @@ If you want to display a custom SVG icon, specify the Gist path in the `svg_path
         title="Page title",
         description="Repository description",
         external=True,
-        svg_path="GistID/sample.svg"
+        svg_path="UserID/GistID/sample.svg"
     ) }}
     {% endraw %}
     ```
@@ -135,7 +135,7 @@ If you want to display a custom SVG icon, specify the Gist path in the `svg_path
         title="JSON to Variables Setter",
         description="GitHub Action designed to parse a JSON file and set the resulting variables (such as operating systems, programming language versions, and GitHub Pages branch) as outputs in a GitHub Actions workflow.",
         external=True,
-        svg_path="996eec6799c869324bf9fe2e93b1a876/github-actions-icon.svg"
+        svg_path="7rikazhexde/996eec6799c869324bf9fe2e93b1a876/github-actions-icon.svg"
     ) }}
     {% endraw %}
     ```
@@ -145,7 +145,7 @@ If you want to display a custom SVG icon, specify the Gist path in the `svg_path
     title="JSON to Variables Setter",
     description="GitHub Action designed to parse a JSON file and set the resulting variables (such as operating systems, programming language versions, and GitHub Pages branch) as outputs in a GitHub Actions workflow.",
     external=True,
-    svg_path="996eec6799c869324bf9fe2e93b1a876/github-actions-icon.svg"
+    svg_path="7rikazhexde/996eec6799c869324bf9fe2e93b1a876/github-actions-icon.svg"
 ) }}
 
 #### Example of a Hatena blog post
