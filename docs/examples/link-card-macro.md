@@ -30,7 +30,7 @@ Macro name: `link_card`.
 | `image_path` | optional | default image | image to display on card |
 | `domain` | optional | Default domain of the site | Domain Display |
 | `external` | optional | False | external link flag |
-| `svg_path` | optional | Automatic determination from URL | Gist path of custom SVG icon |
+| `svg_path` | optional | Automatic determination from URL | Custom SVG icon path in format "user_id/gist_id/filename" (e.g., "7rikazhexde/d418315080179e7c1bd9a7a4366b81f6/github-cutom-icon.svg") |
 
 ### Exapmples
 

@@ -86,6 +86,30 @@ extra:
       link: https://twitter.com/tw_7rikazhexde
     - icon: fontawesome/solid/blog
       link: https://7rikazhexde-pkm-obsidian-mkdocs.netlify.app
+  consent:
+    title: Cookie consent
+    description: >-
+      This site uses Google Analytics and cookies to collect visitor data.
+      The collected data helps me understand site usage and improve the documentation.
+      By clicking "Accept", you consent to the use of cookies for these purposes.
+  analytics:
+    provider: google
+    property: G-MFRRFBKM3H
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/thumb-up-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            Thank you for your feedback!
+        - icon: material/thumb-down-outline
+          name: This page could be improved
+          data: 0
+          note: >-
+            Thank you for your feedback!<br>
+            Please feel free to reach out via Twitter for any suggestions
+            or improvements.
   debug:
     link_card: false
     gist_codeblock: false
