@@ -13,7 +13,8 @@ dependencies = [
     "mkdocs-material>=9.6.1,<10.0.0",
     "requests>=2.25.0",
     "jinja2>=3.0.0",
-    "pygments>=2.19.1"
+    "pygments>=2.19.1",
+    "httpx (>=0.28.1,<0.29.0)"
 ]
 
 [build-system]
@@ -27,7 +28,7 @@ ruff = "^0.9.4"
 pre-commit = "^4.1.0"
 
 [[tool.mypy.overrides]]
-module = ["mkdocs.*","mkdocs_macros.*","jinja2.*","ruamel.*","pygments.*"]
+module = ["mkdocs.*","mkdocs_macros.*","jinja2.*","ruamel.*","pygments.*","httpx.*"]
 ignore_missing_imports = true
 
 [project.entry-points."mkdocs.plugins"]
