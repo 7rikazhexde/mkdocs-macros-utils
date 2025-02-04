@@ -30,8 +30,8 @@ Macro name: `x_twitter_card`.
 
     ```markdown
     {% raw %}
-    {{ x_twitter_card('https://x.com/tw_7rikazhexde/status/1882447777269170238') }}
+    {{ x_twitter_card('https://x.com/tw_7rikazhexde/status/1886013919795560505?s=46&t=rYtARjUKX2vIcBeQXU5GdQ') }}
     {% endraw %}
     ```
 
-{{ x_twitter_card('https://x.com/tw_7rikazhexde/status/1882447777269170238') }}
+{{ x_twitter_card('https://x.com/tw_7rikazhexde/status/1886013919795560505?s=46&t=rYtARjUKX2vIcBeQXU5GdQ') }}
