@@ -1,123 +1,194 @@
 """
-MkDocs Macros Plugin for displaying custom link cards (Async Version).
+MkDocs Macros Plugin for displaying custom link cards (Optimized Async Version).
+Features:
+- Asynchronous SVG content fetching
+- Connection pooling and caching
+- Domain processing optimization
+- URL normalization and validation
+- SVG path parsing and caching
+- Customizable card layout with SVG/image support
 """
 
-from typing import Optional
+from typing import Optional, Dict, Tuple
 from urllib.parse import urlparse
 import asyncio
+from functools import lru_cache
 import httpx
 from mkdocs_macros.plugin import MacrosPlugin
 
-# Import debug logger
 from .debug_logger import DebugLogger
 
 
+async def get_client() -> httpx.AsyncClient:
+    """
+    Create a configured httpx AsyncClient with optimized connection settings.
+
+    Returns:
+        httpx.AsyncClient: Client configured with:
+            - 10 second timeout
+            - Maximum 5 keepalive connections
+            - Maximum 10 total connections
+            - Connection pooling enabled
+    """
+    return httpx.AsyncClient(
+        timeout=10.0,
+        limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+    )
+
+
+# Global cache for SVG content
+SVG_CACHE: Dict[str, Optional[str]] = {}
+"""
+Cache structure for SVG content:
+{
+    "url_or_cache_key": svg_content | None
+}
+Keys can be either:
+- Full URLs for direct content lookup
+- Formatted cache keys (user_id/gist_id/filename) for Gist content
+"""
+
+
+@lru_cache(maxsize=100)
+def parse_svg_path(svg_path: str) -> Optional[Tuple[str, str, str]]:
+    """
+    Parse and validate custom SVG path format with caching.
+
+    Args:
+        svg_path (str): Path in format "user_id/gist_id/filename"
+
+    Returns:
+        Optional[Tuple[str, str, str]]: (user_id, gist_id, filename) if valid, None if invalid
+    """
+    parts = svg_path.split("/")
+    if len(parts) != 3:
+        return None
+    return parts[0], parts[1], parts[2]
+
+
 async def get_gist_content(
-    user_id: str, gist_id: str, filename: str, logger: DebugLogger
+    user_id: str,
+    gist_id: str,
+    filename: str,
+    logger: DebugLogger,
+    client: httpx.AsyncClient,
 ) -> Optional[str]:
     """
-    Asynchronously fetch content from a Gist
+    Asynchronously fetch and cache content from a Gist.
 
     Args:
         user_id (str): GitHub user ID
         gist_id (str): Gist ID
-        filename (str): Filename
-        logger (DebugLogger): Debug logger
+        filename (str): Target filename
+        logger (DebugLogger): Debug logger instance
+        client (httpx.AsyncClient): Async HTTP client
 
     Returns:
-        Optional[str]: SVG content or None
+        Optional[str]: SVG content if successful, None on failure
     """
-    logger.log(
-        f"Fetching Gist content: User={user_id}, ID={gist_id}, Filename={filename}"
-    )
+    cache_key = f"{user_id}/{gist_id}/{filename}"
+    if cache_key in SVG_CACHE:
+        logger.log(f"Using cached Gist content for {cache_key}")
+        return SVG_CACHE[cache_key]
+
+    logger.log(f"Fetching Gist: User={user_id}, ID={gist_id}, File={filename}")
     try:
         url = f"https://gist.githubusercontent.com/{user_id}/{gist_id}/raw/{filename}"
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url)
-            if response.status_code == 200:
-                logger.log("Gist content fetched successfully")
-                return response.text
-            logger.log(
-                f"Failed to fetch Gist content. Status code: {response.status_code}"
-            )
-            return None
+        response = await client.get(url)
+        if response.status_code == 200:
+            SVG_CACHE[cache_key] = response.text
+            return response.text
+        logger.log(f"Gist fetch failed: {response.status_code}")
+        SVG_CACHE[cache_key] = None
+        return None
     except Exception as e:
-        logger.log(f"Error fetching Gist content: {e}")
+        logger.log(f"Gist fetch error: {e}")
+        SVG_CACHE[cache_key] = None
         return None
 
 
-async def get_svg_content(url: str, logger: DebugLogger) -> Optional[str]:
+async def get_svg_content(
+    url: str, logger: DebugLogger, client: httpx.AsyncClient
+) -> Optional[str]:
     """
-    Get appropriate SVG content based on URL
+    Get SVG content based on URL with caching support.
 
     Args:
-        url (str): Target URL
-        logger (DebugLogger): Debug logger
+        url (str): Target URL to process
+        logger (DebugLogger): Debug logger instance
+        client (httpx.AsyncClient): Async HTTP client
 
     Returns:
-        Optional[str]: SVG content or None
+        Optional[str]: SVG content if found and fetched successfully, None otherwise
     """
+    if url in SVG_CACHE:
+        logger.log(f"Using cached SVG for URL: {url}")
+        return SVG_CACHE[url]
+
     logger.log(f"Detecting SVG for URL: {url}")
+    svg_content = None
+
     if "github.com" in url:
         logger.log("Using GitHub SVG")
-        return await get_gist_content(
+        svg_content = await get_gist_content(
             "7rikazhexde",
             "d418315080179e7c1bd9a7a4366b81f6",
             "github-cutom-icon.svg",
             logger,
+            client,
         )
     elif "hatenablog.com" in url:
         logger.log("Using Hatena Blog SVG")
-        return await get_gist_content(
+        svg_content = await get_gist_content(
             "7rikazhexde",
             "1b1079ee3793f9223173347b0bc6ab3b",
             "hatenablog-logotype.svg",
             logger,
+            client,
         )
-    logger.log("No matching SVG found")
-    return None
+
+    SVG_CACHE[url] = svg_content
+    return svg_content
 
 
+@lru_cache(maxsize=1000)
 def extract_domain_for_display(url: str) -> str:
     """
-    Extract display domain portion from URL
+    Extract and format domain portion from URL with caching.
 
     Args:
-        url (str): Complete URL
+        url (str): Full URL to process
 
     Returns:
-        str: Display domain portion
+        str: Formatted domain name for display
     """
     parsed = urlparse(url)
     if parsed.netloc:
-        if "github.com" in parsed.netloc:
-            return parsed.netloc
-        elif "hatenablog.com" in parsed.netloc:
-            return parsed.netloc
+        for domain in ("github.com", "hatenablog.com"):
+            if domain in parsed.netloc:
+                return parsed.netloc
         return parsed.netloc
     return url
 
 
+@lru_cache(maxsize=1000)
 def clean_url(url: str) -> str:
     """
-    Normalize URL (handle trailing slashes, etc.)
+    Normalize URL by handling duplicated and trailing slashes with caching.
 
     Args:
-        url (str): Input URL
+        url (str): Input URL to normalize
 
     Returns:
-        str: Normalized URL
+        str: Normalized URL string
     """
-    # Consolidate multiple slashes into one (excluding scheme part)
-    while "//" in url[8:]:  # Exclude scheme part (https://)
-        url = url.replace("//", "/")
-    # Remove trailing slash
-    if url.endswith("/"):
-        url = url[:-1]
-    return url
+    clean = url
+    while "//" in clean[8:]:
+        clean = clean.replace("//", "/")
+    return clean.rstrip("/")
 
 
-def create_link_card(
+async def create_link_card(
     url: str,
     title: str,
     description: Optional[str] = None,
@@ -128,20 +199,20 @@ def create_link_card(
     env: Optional[MacrosPlugin] = None,
 ) -> str:
     """
-    Create a link card
+    Create a customized link card with optimized async processing.
 
     Args:
         url (str): Target URL
         title (str): Card title
-        description (Optional[str], optional): Card description. Defaults to None.
-        image_path (Optional[str], optional): Image path. Defaults to None.
-        domain (Optional[str], optional): Domain name. Auto-extracted from URL if not specified.
-        external (bool, optional): External link flag. Defaults to False.
-        svg_path (Optional[str], optional): Custom SVG path in format "user_id/gist_id/filename". Defaults to None.
-        env (Optional[MacrosPlugin], optional): MkDocs macro environment. Defaults to None.
+        description (Optional[str]): Card description text
+        image_path (Optional[str]): Custom image path
+        domain (Optional[str]): Override domain display
+        external (bool): External link flag
+        svg_path (Optional[str]): Custom SVG path in "user_id/gist_id/filename" format
+        env (Optional[MacrosPlugin]): MkDocs macro environment
 
     Returns:
-        str: Rendered link card HTML
+        str: Rendered HTML for the link card
     """
     logger = DebugLogger.create_logger("link_card", env)
     logger.log("Creating link card", {"url": url, "title": title})
@@ -150,38 +221,26 @@ def create_link_card(
         logger.log("Error: Title is required")
         raise ValueError("`title` is required for creating a link card.")
 
-    # Normalize URL
     clean_target_url = clean_url(url)
-
-    # Determine display domain
     display_domain = domain or extract_domain_for_display(url)
     description = description or ""
 
-    # Get the base URL of the site
-    base_url = ""
-    if env and hasattr(env, "conf"):
-        base_url = env.conf.get("site_url", "")
+    base_url = env.conf.get("site_url", "") if env and hasattr(env, "conf") else ""
 
-    # Determine image path
-    if external and not image_path:
-        final_image_path = ""
-        logger.log("External link without image")
-    else:
-        # Combine base URL and path
+    final_image_path = ""
+    if not (external and not image_path):
         default_image = "assets/img/site.png"
         final_image_path = image_path or f"{base_url.rstrip('/')}/{default_image}"
         logger.log(f"Image path: {final_image_path}")
 
-    # Get and process SVG content
     svg_content = None
-    if svg_path:
-        logger.log(f"Using custom SVG path: {svg_path}")
-        parts = svg_path.split("/")  # 形式: "user_id/gist_id/filename"
-        if len(parts) != 3:
-            logger.log(
-                "Error: Invalid SVG path format. Expected: user_id/gist_id/filename"
-            )
-            error_html = f'''
+    async with await get_client() as client:
+        if svg_path:
+            logger.log(f"Using custom SVG path: {svg_path}")
+            parsed_path = parse_svg_path(svg_path)
+            if not parsed_path:
+                logger.log("Error: Invalid SVG path format")
+                return f'''
 <div class="custom-link-card" onclick="window.location='{clean_target_url}'" role="link" tabindex="0">
     <div class="custom-link-card-content">
         <div class="custom-link-card-title" aria-label="{title}">{title}</div>
@@ -190,12 +249,12 @@ def create_link_card(
     </div>
 </div>
 '''
-            return error_html
-
-        user_id, gist_id, filename = parts
-        svg_content = asyncio.run(get_gist_content(user_id, gist_id, filename, logger))
-    else:
-        svg_content = asyncio.run(get_svg_content(clean_target_url, logger))
+            user_id, gist_id, filename = parsed_path
+            svg_content = await get_gist_content(
+                user_id, gist_id, filename, logger, client
+            )
+        else:
+            svg_content = await get_svg_content(clean_target_url, logger, client)
 
     svg_html = ""
     if svg_content:
@@ -203,7 +262,6 @@ def create_link_card(
             'fill="black"', 'class="svg-path"'
         )
 
-    # Generate HTML
     html = f'''
 <div class="custom-link-card" onclick="window.location='{
         clean_target_url
@@ -235,13 +293,13 @@ def create_link_card(
 
 def define_env(env: MacrosPlugin) -> None:
     """
-    Define link_card macro in MkDocs macro environment
+    Define link_card macro in MkDocs macro environment.
 
     Args:
-        env (MacrosPlugin): Macro plugin environment
+        env (MacrosPlugin): MkDocs macro plugin environment
     """
 
-    def sync_link_card(
+    async def async_link_card(
         url: str,
         title: str,
         description: Optional[str] = None,
@@ -251,21 +309,21 @@ def define_env(env: MacrosPlugin) -> None:
         svg_path: Optional[str] = None,
     ) -> str:
         """
-        Synchronous wrapper for async link_card processing
+        Async implementation of link card creation.
 
         Args:
             url (str): Target URL
             title (str): Card title
-            description (Optional[str], optional): Card description. Defaults to None.
-            image_path (Optional[str], optional): Image path. Defaults to None.
-            domain (Optional[str], optional): Domain name. Defaults to None.
-            external (bool, optional): External link flag. Defaults to False.
-            svg_path (Optional[str], optional): Custom SVG path in format "user_id/gist_id/filename". Defaults to None.
+            description (Optional[str]): Card description
+            image_path (Optional[str]): Custom image path
+            domain (Optional[str]): Override domain display
+            external (bool): External link flag
+            svg_path (Optional[str]): Custom SVG path
 
         Returns:
-            str: Rendered link card HTML
+            str: Rendered HTML for the link card
         """
-        return create_link_card(
+        return await create_link_card(
             url=url,
             title=title,
             description=description,
@@ -276,5 +334,17 @@ def define_env(env: MacrosPlugin) -> None:
             env=env,
         )
 
-    # Register the synchronous version as a macro
+    def sync_link_card(*args, **kwargs) -> str:
+        """
+        Synchronous wrapper for async link card creation.
+
+        Args:
+            *args: Positional arguments passed to async_link_card
+            **kwargs: Keyword arguments passed to async_link_card
+
+        Returns:
+            str: Rendered HTML for the link card
+        """
+        return asyncio.run(async_link_card(*args, **kwargs))
+
     env.macro(sync_link_card, "link_card")

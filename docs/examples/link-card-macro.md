@@ -56,15 +56,15 @@ Create a link card based on the css settings and the values specified in the par
     ```markdown
     {% raw %}
     {{ link_card(
-        url="https://7rikazhexde-pkm-obsidian-mkdocs.netlify.app",
-        title="7rikazhexde PKM",
+        url="https://7rikazhexde.github.io/mkdocs-macros-utils/",
+        title="MkDocs Macros Utils Documentation",
     ) }}
     {% endraw %}
     ```  
 
 {{ link_card(
-    url="https://7rikazhexde-pkm-obsidian-mkdocs.netlify.app",
-    title="7rikazhexde PKM",
+    url="https://7rikazhexde.github.io/mkdocs-macros-utils/",
+    title="MkDocs Macros Utils Documentation",
 ) }}
 
 #### Example of GitHub repository link

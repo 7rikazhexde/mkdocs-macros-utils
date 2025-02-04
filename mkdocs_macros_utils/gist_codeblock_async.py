@@ -1,8 +1,14 @@
 """
-MkDocs Macros Plugin for fetching and displaying Gist code blocks (Async Version).
+MkDocs Macros Plugin for fetching and displaying Gist code blocks (Optimized Async Version).
+Features:
+- Asynchronous Gist content fetching
+- Connection pooling and request optimization
+- Content and language detection caching
+- Robust error handling and logging
 """
 
-from typing import Optional, Tuple, Dict
+from typing import Optional, Tuple, Dict, Any
+from functools import lru_cache
 import re
 import asyncio
 import httpx
@@ -10,18 +16,71 @@ from mkdocs_macros.plugin import MacrosPlugin
 from pathlib import Path
 from pygments.lexers import guess_lexer, TextLexer
 
-# Import debug logger
 from .debug_logger import DebugLogger
 
 
+async def get_client() -> httpx.AsyncClient:
+    """
+    Create a configured httpx AsyncClient with optimized connection settings.
+
+    Returns:
+        httpx.AsyncClient: Client configured with:
+            - 10 second timeout
+            - Maximum 5 keepalive connections
+            - Maximum 10 total connections
+            - Connection pooling enabled
+    """
+    return httpx.AsyncClient(
+        timeout=10.0,
+        limits=httpx.Limits(max_keepalive_connections=5, max_connections=10),
+    )
+
+
+# Global cache for storing Gist metadata and content
+GIST_CACHE: Dict[str, Dict[str, Any]] = {}
+"""
+Cache structure for Gist data:
+{
+    "gist_url": {
+        "raw_url": str,        # Raw content URL
+        "filename": str,       # Original filename
+        "content": str         # Cached Gist content
+    }
+}
+"""
+
+
 class GistProcessor:
-    """Class for processing Gists asynchronously"""
+    """
+    Processor for handling Gist operations with optimized caching and async fetching.
+
+    Features:
+    - Language detection from filename and content
+    - Content caching and retrieval
+    - Async Gist info and content fetching
+    - Robust error handling
+
+    Attributes:
+        logger (DebugLogger): Logger instance for debug output
+        lang_map (Dict[str, str]): Mapping of file extensions to language identifiers
+    """
 
     def __init__(self, logger: DebugLogger) -> None:
+        """
+        Initialize GistProcessor with logger and language mappings.
+
+        Args:
+            logger (DebugLogger): Debug logger for operation tracking
+        """
         self.logger = logger
-        # Language and extension mappings
-        self.lang_map: Dict[str, str] = {
-            # Extension-based mappings
+        self._initialize_lang_map()
+
+    def _initialize_lang_map(self) -> None:
+        """
+        Initialize mapping between file extensions and language identifiers.
+        Used for syntax highlighting in code blocks.
+        """
+        self.lang_map = {
             ".sh": "bash",
             ".py": "python",
             ".js": "javascript",
@@ -51,111 +110,118 @@ class GistProcessor:
         }
 
     async def get_gist_info(
-        self, gist_url: str
+        self, gist_url: str, client: httpx.AsyncClient
     ) -> Tuple[Optional[str], Optional[str], Optional[str]]:
-        """Asynchronously get raw URL and metadata from Gist URL"""
-        self.logger.log("Processing URL", gist_url)
+        """
+        Get Gist information with caching support.
 
-        # Return as is if already a raw URL
+        Args:
+            gist_url (str): URL of the Gist
+            client (httpx.AsyncClient): Async HTTP client
+
+        Returns:
+            Tuple[Optional[str], Optional[str], Optional[str]]:
+                (raw_url, filename, error_message)
+        """
+        if gist_url in GIST_CACHE:
+            cache_data = GIST_CACHE[gist_url]
+            self.logger.log("Using cached Gist info", gist_url)
+            return cache_data["raw_url"], cache_data["filename"], None
+
         if gist_url.startswith("https://gist.githubusercontent.com/"):
             filename = gist_url.split("/")[-1]
-            self.logger.log("Already raw URL", filename)
+            GIST_CACHE[gist_url] = {"raw_url": gist_url, "filename": filename}
             return gist_url, filename, None
 
-        # Extract username and Gist ID
         pattern = r"https://gist\.github\.com/([^/]+)/([a-f0-9]+)"
         match = re.match(pattern, gist_url)
 
         if not match:
-            self.logger.log("Invalid URL format")
             return None, None, "Invalid Gist URL format"
 
         username, gist_id = match.groups()
-        self.logger.log("Extracted info", f"username={username}, gist_id={gist_id}")
 
         try:
-            # Get information from Gist page asynchronously
-            async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"https://gist.github.com/{username}/{gist_id}"
-                )
+            response = await client.get(f"https://gist.github.com/{username}/{gist_id}")
 
-                if response.status_code != 200:
-                    return (
-                        None,
-                        None,
-                        f"Failed to fetch Gist: HTTP {response.status_code}",
-                    )
+            if response.status_code != 200:
+                return None, None, f"Failed to fetch Gist: HTTP {response.status_code}"
 
-                # Find filename and raw URL
-                raw_button_match = re.search(
-                    r'href="(/[^/]+/[^/]+/raw/[^"]+)"', response.text
-                )
+            raw_button_match = re.search(
+                r'href="(/[^/]+/[^/]+/raw/[^"]+)"', response.text
+            )
 
-                if raw_button_match:
-                    raw_path = raw_button_match.group(1)
-                    raw_url = f"https://gist.githubusercontent.com{raw_path}"
-                    filename = raw_path.split("/")[-1]
+            if raw_button_match:
+                raw_path = raw_button_match.group(1)
+                raw_url = f"https://gist.githubusercontent.com{raw_path}"
+                filename = raw_path.split("/")[-1]
 
-                    self.logger.log(
-                        "Got file info from page",
-                        f"filename={filename}, raw_url={raw_url}",
-                    )
-                    return raw_url, filename, None
+                GIST_CACHE[gist_url] = {"raw_url": raw_url, "filename": filename}
+                return raw_url, filename, None
 
-                return None, None, "Could not find raw file URL in Gist"
+            return None, None, "Could not find raw file URL in Gist"
 
         except httpx.RequestError as e:
             return None, None, f"Request error: {str(e)}"
 
+    @lru_cache(maxsize=100)
     def detect_language_from_filename(self, filename: str) -> str:
-        """Detect language from filename"""
+        """
+        Detect programming language from filename with caching.
+
+        Args:
+            filename (str): Name of the file to analyze
+
+        Returns:
+            str: Detected language identifier or 'text' if unknown
+        """
         if not filename:
             return "text"
 
-        # Extract filename and extension from path
-        file_path = Path(filename)
-        ext = file_path.suffix.lower()
+        ext = Path(filename).suffix.lower()
+        return self.lang_map.get(ext, "text")
 
-        # Get language from mapping, default to 'text'
-        detected_lang = self.lang_map.get(ext, "text")
-        self.logger.log(f"Language from filename: {detected_lang}")
-        return detected_lang
-
+    @lru_cache(maxsize=1000)
     def detect_language_from_content(
         self, content: str, filename: Optional[str] = None
     ) -> str:
-        """Detect language from content"""
-        # First try to detect language from filename
+        """
+        Detect programming language from content and filename with caching.
+
+        Args:
+            content (str): Source code content
+            filename (Optional[str]): Optional filename for extension-based detection
+
+        Returns:
+            str: Detected language identifier or 'text' if unknown
+        """
         if filename:
             file_lang = self.detect_language_from_filename(filename)
             if file_lang != "text":
-                self.logger.log("Language detected from filename", file_lang)
                 return file_lang
 
-        # Language detection using Pygments
         try:
             lexer = guess_lexer(content)
-
-            # Return 'text' if TextLexer
             if isinstance(lexer, TextLexer):
-                self.logger.log("Pygments detected plain text")
                 return "text"
 
-            # Use first alias or name of lexer
             lang_name = lexer.aliases[0] if lexer.aliases else lexer.name.lower()
-            self.logger.log("Pygments detected language", lang_name)
-
             return self.convert_pygments_to_markdown_lang(lang_name)
-
-        except Exception as e:
-            self.logger.log("Error in language detection", str(e))
+        except Exception:
             return "text"
 
+    @lru_cache(maxsize=100)
     def convert_pygments_to_markdown_lang(self, pygments_name: str) -> str:
-        """Convert Pygments language name to Markdown language identifier"""
+        """
+        Convert Pygments language identifier to Markdown language identifier with caching.
+
+        Args:
+            pygments_name (str): Pygments language name
+
+        Returns:
+            str: Corresponding Markdown language identifier or 'text' if unknown
+        """
         lang_map = {
-            # Basic language mappings
             "python": "python",
             "python3": "python",
             "javascript": "javascript",
@@ -164,117 +230,123 @@ class GistProcessor:
             "console": "bash",
             "shell": "bash",
             "sh": "bash",
-            # Add other languages as needed
             "ruby": "ruby",
             "php": "php",
             "go": "go",
             "rust": "rust",
         }
+        return lang_map.get(pygments_name.lower(), "text")
 
-        pygments_name = pygments_name.lower()
-        return lang_map.get(pygments_name, "text")
+    async def fetch_gist_content(
+        self, url: str, client: httpx.AsyncClient
+    ) -> Tuple[Optional[str], Optional[str]]:
+        """
+        Fetch and cache Gist content asynchronously.
 
-    async def fetch_gist_content(self, url: str) -> Tuple[Optional[str], Optional[str]]:
-        """Asynchronously fetch content from raw Gist URL"""
-        self.logger.log("Fetching content from", url)
+        Args:
+            url (str): Raw Gist URL
+            client (httpx.AsyncClient): Async HTTP client
+
+        Returns:
+            Tuple[Optional[str], Optional[str]]: (content, error_message)
+        """
+        if url in GIST_CACHE and "content" in GIST_CACHE[url]:
+            self.logger.log("Using cached content", url)
+            return GIST_CACHE[url]["content"], None
 
         try:
-            async with httpx.AsyncClient() as client:
-                response = await client.get(url, timeout=10.0)
+            response = await client.get(url)
 
-                if response.status_code == 200:
-                    content_length = len(response.text)
-                    self.logger.log(
-                        "Content fetched successfully",
-                        f"Length: {content_length} chars",
-                    )
-                    return response.text, None
+            if response.status_code == 200:
+                if url not in GIST_CACHE:
+                    GIST_CACHE[url] = {}
+                GIST_CACHE[url]["content"] = response.text
+                return response.text, None
 
-                self.logger.log(
-                    "Failed to fetch content", f"Status code: {response.status_code}"
-                )
-                return (
-                    None,
-                    f"Failed to fetch Gist content: HTTP {response.status_code}",
-                )
+            return None, f"Failed to fetch Gist content: HTTP {response.status_code}"
 
         except httpx.RequestError as e:
-            self.logger.log("Error fetching content", str(e))
             return None, f"Error fetching Gist content: {str(e)}"
 
 
 def define_env(env: MacrosPlugin) -> None:
     """
-    Define gist_codeblock macro in MkDocs macro environment
+    Define gist_codeblock macro in MkDocs macro environment.
+
+    Args:
+        env (MacrosPlugin): MkDocs macro plugin environment
     """
-    # Create debug logger
     logger = DebugLogger.create_logger("gist_codeblock", env)
     processor = GistProcessor(logger)
 
     def sync_gist_codeblock(
         gist_url: str, indent: int = 0, ext: Optional[str] = None
     ) -> str:
-        """Synchronous wrapper for async Gist processing"""
+        """
+        Synchronous wrapper for async Gist processing.
+
+        Args:
+            gist_url (str): URL of the Gist
+            indent (int, optional): Indentation level. Defaults to 0.
+            ext (Optional[str], optional): Force specific language extension. Defaults to None.
+
+        Returns:
+            str: Rendered code block or error message
+        """
         return asyncio.run(_async_gist_codeblock(gist_url, indent, ext))
 
     async def _async_gist_codeblock(
         gist_url: str, indent: int = 0, ext: Optional[str] = None
     ) -> str:
-        """Async macro to generate code block from Gist"""
+        """
+        Process Gist URL and generate code block asynchronously.
+
+        Args:
+            gist_url (str): URL of the Gist
+            indent (int, optional): Indentation level. Defaults to 0.
+            ext (Optional[str], optional): Force specific language extension. Defaults to None.
+
+        Returns:
+            str: Rendered code block or error message
+        """
         logger.log("\n=== Starting new Gist processing ===")
-        logger.log("Input parameters", f"URL={gist_url}, indent={indent}, ext={ext}")
 
-        # Get raw URL and metadata
-        raw_url, filename, error = await processor.get_gist_info(gist_url)
-        if error:
-            logger.log("Error getting Gist info", error)
-            return f"Error: {error}"
+        async with await get_client() as client:
+            raw_url, filename, error = await processor.get_gist_info(gist_url, client)
+            if error:
+                return f"Error: {error}"
+            if raw_url is None:
+                return "Error: Failed to get raw URL"
 
-        if raw_url is None:
-            return "Error: Failed to get raw URL"
+            content, error = await processor.fetch_gist_content(raw_url, client)
+            if error:
+                return f"Error: {error}"
+            if content is None:
+                return "Error: Failed to fetch content"
 
-        logger.log("Got Gist info", f"raw_url={raw_url}, filename={filename}")
+            lang = (
+                ext
+                if ext
+                else processor.detect_language_from_content(content, filename)
+            )
 
-        # Get content
-        content, error = await processor.fetch_gist_content(raw_url)
-        if error:
-            logger.log("Error fetching content", error)
-            return f"Error: {error}"
+            content = (
+                content.replace("\\$", "$")
+                .replace("\\`", "`")
+                .replace("\\{", "{")
+                .replace("\\}", "}")
+            )
 
-        if content is None:
-            return "Error: Failed to fetch content"
+            indent_spaces = " " * (4 * indent)
+            code_block = [
+                "",
+                f"{indent_spaces}```{lang}",
+                *[f"{indent_spaces}{line}" for line in content.splitlines()],
+                f"{indent_spaces}```",
+                "",
+            ]
 
-        # Language detection logic
-        if ext:
-            # Prioritize user-specified extension
-            logger.log("Using specified extension", ext)
-            lang = ext
-        else:
-            # Detect language from extension and content
-            lang = processor.detect_language_from_content(content, filename)
+            logger.log("=== Gist processing completed ===\n")
+            return "\n".join(code_block)
 
-        logger.log("Final language selection", lang)
-
-        # Unescape special characters
-        content = content.replace("\\$", "$")
-        content = content.replace("\\`", "`")
-        content = content.replace("\\{", "{")
-        content = content.replace("\\}", "}")
-
-        # Calculate indentation (4 spaces × level)
-        indent_spaces = " " * (4 * indent)
-
-        # Generate code block
-        code_block = [
-            "",  # Add empty line
-            f"{indent_spaces}```{lang}",
-            *[f"{indent_spaces}{line}" for line in content.splitlines()],
-            f"{indent_spaces}```",
-            "",  # Add empty line
-        ]
-
-        logger.log("=== Gist processing completed ===\n")
-        return "\n".join(code_block)
-
-    # Register the synchronous version as a macro
     env.macro(sync_gist_codeblock, "gist_codeblock")
