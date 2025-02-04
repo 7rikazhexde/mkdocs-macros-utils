@@ -24,7 +24,7 @@ Macro：`gist_codeblock`
 
 | Parameters | Required | Default | Description |
 |-----------|------|------------|------|
-| `gist_url` | required | none | Gist shared link or Raw URL |
+| `gist_url` | required | none | Gist shared link |
 | `indent` | optional | 0 | indent level (`0`: none, `1`: 4 spaces, `2`: 8 spaces) |
 | `ext` | Optional | Automatic determination from URL | language extension (e.g. `py`, `js`, `sh`, etc.) |
 
@@ -67,7 +67,7 @@ Macro：`gist_codeblock`
     ```markdown
     {% raw %}
     {{ gist_codeblock(
-        gist_url="Gist shared link or Raw URL",
+        gist_url="Gist shared link",
         indent=1  # Indentation level (1:4 spaces, 2:8 spaces)
     ) }}
     {% endraw %}
@@ -106,7 +106,7 @@ Macro：`gist_codeblock`
     ```markdown
     {% raw %}
     {{ gist_codeblock(
-        gist_url="Gist shared link or Raw URL",
+        gist_url="Gist shared link",
         ext="py"  # Specify language extensions
     ) }}
     {% endraw %}
