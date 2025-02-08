@@ -8,7 +8,7 @@ tags:
 description: Documentation showing a macro for creating custom link card macros using the MkDocs Macros Plugin
 ---
 
-# About the macro to display custom link cards using the MkDocs Macros Plugin
+# Link Card Macro
 
 ## Summary
 
@@ -36,11 +36,11 @@ Macro name: `link_card`.
 
 Create a link card based on the css settings and the values specified in the parameters.
 
-#### Examples of links within the site
+#### Examples of minimum parameters
 
 ??? tip "How to specify minimum parameters"
 
-    !!! tip
+    !!! info
 
         If `image_path` is omitted, `assets/img/site.png` will be displayed.
 
@@ -60,11 +60,53 @@ Create a link card based on the css settings and the values specified in the par
         title="MkDocs Macros Utils Documentation",
     ) }}
     {% endraw %}
-    ```  
+    ```
 
 {{ link_card(
     url="https://7rikazhexde.github.io/mkdocs-macros-utils/",
     title="MkDocs Macros Utils Documentation",
+) }}
+
+#### Examples of maximum parameters
+
+??? tip "How to specify maximum parameters"
+
+    !!! info
+
+        If `image_path` and `svg_path` are specified, `svg_path` takes precedence.
+
+    ```markdown
+    {% raw %}
+    {{ link_card(
+        url="https://7rikazhexde-pkm-obsidian-mkdocs.netlify.app/ja/development/tools/design/inkscape/",
+        title="Inkscape - 7rikazhexde PKM",
+        description="Inkscape tips",
+        external=True,
+        image_path="examples/images/inkscape.png"
+        svg_path=""
+    ) }}
+    {% endraw %}
+    ```  
+
+##### Specify image_path
+
+{{ link_card(
+    url="https://7rikazhexde.github.io/mkdocs-macros-utils/",
+    title="Inkscape - 7rikazhexde PKM",
+    description="Inkscape関連のtipsをまとめる",
+    external=True,
+    image_path="examples/images/inkscape.png"
+) }}
+
+##### Specify svg_path
+
+{{ link_card(
+    url="https://7rikazhexde.github.io/mkdocs-macros-utils/",
+    title="Inkscape - 7rikazhexde PKM",
+    description="Inkscape関連のtipsをまとめる",
+    external=True,
+    image_path="examples/images/inkscape.png",
+    svg_path="7rikazhexde/b57ab5c007c8fc5229b3b0aee72af702/simple-materialformkdocs.svg"
 ) }}
 
 #### Example of GitHub repository link

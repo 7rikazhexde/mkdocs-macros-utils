@@ -10,11 +10,8 @@ from mkdocs.config import Config
 from mkdocs.structure.files import Files
 from mkdocs_macros.plugin import MacrosPlugin
 
-# from . import link_card
-from . import link_card_async
-
-# from . import gist_codeblock
-from . import gist_codeblock_async
+from . import link_card
+from . import gist_codeblock
 from . import x_twitter_card
 
 logger = logging.getLogger("mkdocs.plugins.macros-utils")
@@ -99,10 +96,8 @@ def define_env(env: MacrosPlugin) -> None:
         copy_static_files(plugin_dir, docs_dir)
 
         # マクロを登録
-        # link_card.define_env(env)
-        link_card_async.define_env(env)
-        # gist_codeblock.define_env(env)
-        gist_codeblock_async.define_env(env)
+        link_card.define_env(env)
+        gist_codeblock.define_env(env)
         x_twitter_card.define_env(env)
 
         logger.info("MkDocs Macros Utils initialized successfully")

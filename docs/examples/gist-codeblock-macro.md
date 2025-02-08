@@ -8,7 +8,7 @@ tags:
 description: Documentation showing macros for generating Gist code blocks using the MkDocs Macros Plugin
 ---
 
-# About macros to generate Gist code blocks using MkDocs Macros Plugin
+# Gist Codeblock Macro
 
 ## Summary
 

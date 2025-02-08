@@ -96,7 +96,7 @@ def extract_domain_for_display(url: str) -> str:
 
 def clean_url(url: str) -> str:
     """
-    Normalize URL (handle trailing slashes, etc.)
+    Normalize URL (handle trailing slashes, multiple slashes, etc.)
 
     Args:
         url (str): Input URL
@@ -104,12 +104,15 @@ def clean_url(url: str) -> str:
     Returns:
         str: Normalized URL
     """
-    # Consolidate multiple slashes into one (excluding scheme part)
-    while "//" in url[8:]:  # Exclude scheme part (https://)
-        url = url.replace("//", "/")
-    # Remove trailing slash
-    if url.endswith("/"):
-        url = url[:-1]
+    # Split the URL into scheme and the rest
+    parts = url.split("://", 1)
+
+    if len(parts) > 1:
+        scheme, rest = parts[0], parts[1]
+        # Remove trailing slash and consolidate multiple slashes
+        cleaned_rest = "/".join(filter(bool, rest.split("/")))
+        return f"{scheme}://{cleaned_rest}"
+
     return url
 
 
@@ -165,7 +168,15 @@ def create_link_card(
     else:
         # Combine base URL and path
         default_image = "assets/img/site.png"
-        final_image_path = image_path or f"{base_url.rstrip('/')}/{default_image}"
+        if image_path:
+            # 外部リンクかどうかに関わらず、相対パスの場合は基本URLを付加
+            if not image_path.startswith(("http://", "https://")):
+                final_image_path = f"{base_url.rstrip('/')}/{image_path.lstrip('/')}"
+            else:
+                final_image_path = image_path
+        else:
+            final_image_path = f"{base_url.rstrip('/')}/{default_image}"
+
         logger.log(f"Image path: {final_image_path}")
 
     # Get and process SVG content
@@ -226,6 +237,7 @@ def create_link_card(
 '''
 
     logger.log("Link card created successfully")
+    logger.log(html)
     return html
 
 

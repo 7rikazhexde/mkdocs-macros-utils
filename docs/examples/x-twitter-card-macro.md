@@ -8,7 +8,7 @@ tags:
 description: Documentation showing a macro to display X (formerly Twitter) link cards using the MkDocs Macros Plugin.
 ---
 
-# Macros to display X (formerly Twitter) link cards using MkDocs Macros Plugin
+# X-Twitter Link Card Macro
 
 ## Summary
 

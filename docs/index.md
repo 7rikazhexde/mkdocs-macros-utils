@@ -4,9 +4,9 @@
 
 ## Features
 
-- **Link Card**: Create link cards with images and descriptions, etc
-- **Gist Code Block**: Embed and syntax-highlight code from GitHub Gists
-- **X/Twitter Card**: Embed tweets with proper styling and dark mode support
+- [**Link Card**](./examples/link-card-macro.md): Create link cards with images and descriptions, etc
+- [**Gist Code Block**](./examples/gist-codeblock-macro.md): Embed and syntax-highlight code from GitHub Gists
+- [**X/Twitter Card**](./examples/x-twitter-card-macro.md): Embed tweets with proper styling and dark mode support
 
 ## Installation
 
