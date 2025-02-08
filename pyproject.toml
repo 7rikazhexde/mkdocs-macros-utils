@@ -31,6 +31,7 @@ pytest-xdist = "^3.6.1"
 
 [tool.mypy]
 files = ["mkdocs_macros_utils", "tests"]
+explicit_package_bases = true
 python_version = "3.12"
 show_error_context = true
 show_column_numbers = true
@@ -49,4 +50,4 @@ ignore_missing_imports = true
 "macros-utils" = "mkdocs_macros_utils:define_env"
 
 [tool.pytest.ini_options]
-testpaths = ["tests"]
+testpaths = ["tests/python"]

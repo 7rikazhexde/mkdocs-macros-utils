@@ -13,7 +13,7 @@ from mkdocs_macros_utils.x_twitter_card import (
     define_env,
 )
 from mkdocs_macros_utils.debug_logger import DebugLogger
-from tests import MockMacrosPlugin
+from tests.python import MockMacrosPlugin
 
 
 # -- URL Validation Tests ------------------------------

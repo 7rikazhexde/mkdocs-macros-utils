@@ -4,7 +4,7 @@ Tests for Debug Logger module in MkDocs Macros Utils
 
 import pytest
 from _pytest.logging import LogCaptureFixture
-from tests import MockMacrosPlugin
+from tests.python import MockMacrosPlugin
 from mkdocs_macros_utils.debug_logger import DebugLogger
 
 

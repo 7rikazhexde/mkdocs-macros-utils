@@ -8,7 +8,7 @@ from pytest_mock import MockerFixture
 import requests
 from mkdocs_macros_utils.gist_codeblock import GistProcessor
 from mkdocs_macros_utils.debug_logger import DebugLogger
-from tests import MockMacrosPlugin
+from tests.python import MockMacrosPlugin
 
 
 # -- Language Detection Tests ------------------------------
