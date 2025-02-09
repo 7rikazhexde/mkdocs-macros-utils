@@ -16,6 +16,11 @@ dependencies = [
     "pygments>=2.19.1",
 ]
 
+[project.urls]
+homepage = "https://github.com/7rikazhexde/mkdocs-macros-utils"
+repository = "https://github.com/7rikazhexde/mkdocs-macros-utils"
+documentation = "https://7rikazhexde.github.io/mkdocs-macros-utils/"
+
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"

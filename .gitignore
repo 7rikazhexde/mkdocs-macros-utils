@@ -13,6 +13,15 @@ __pycache__/
 .coverage
 htmlcov/
 
+# poetry build
+dist/
+
+# python -m build
+build/
+
+# setuptools
+*.egg-info/
+
 # mkdocs
 site/
 
