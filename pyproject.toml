@@ -28,6 +28,14 @@ pre-commit = "^4.1.0"
 pytest-cov = "^6.0.0"
 pytest-mock = "^3.14.0"
 pytest-xdist = "^3.6.1"
+taskipy = {version = "^1.14.1", python = ">=3.10,<4.0"}
+
+[tool.taskipy.tasks]
+test_coverage_verbose = "pytest -s -vv --cov=mkdocs_macros_utils --cov-branch --cov-report term-missing --cov-report html"
+test_html_report = "pytest --html=htmlcov/report_page.html"
+test_ci_xml = "python scripts/run_tests.py --report xml"
+test_ci_term = "python scripts/run_tests.py --report term"
+test_coverage = "pytest --cov=mkdocs_macros_utils --cov-branch --cov-report=term-missing --cov-report=html"
 
 [tool.mypy]
 files = ["mkdocs_macros_utils", "tests"]

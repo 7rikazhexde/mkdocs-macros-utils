@@ -42,6 +42,30 @@ def test_detect_language_from_content(processor: GistProcessor) -> None:
         assert processor.detect_language_from_content(content, filename) == expected
 
 
+def test_detect_language_from_content_mixed_detection(processor: GistProcessor) -> None:
+    """
+    Test comprehensive language detection scenarios
+    Covering various cases of filename and content-based detection
+    """
+    # Test cases that specifically target the 122-127 line branch
+    test_cases = [
+        # Filename with specific language that matches filename detection
+        ("script.py", "random text", "python"),
+        # Filename with specific language, but content suggests a different language
+        ("script.py", "const test = 'javascript'", "python"),
+        # Edge case: filename with rare extension
+        ("script.custom", "print('test')", "text"),
+        # Filename with extension that maps to a non-text language
+        ("script.sh", "# Shell script comment", "bash"),
+    ]
+
+    for filename, content, expected_lang in test_cases:
+        result = processor.detect_language_from_content(content, filename)
+        assert result == expected_lang, (
+            f"Failed for filename={filename}, content={content}"
+        )
+
+
 # -- Gist URL Processing Tests ------------------------------
 def test_get_gist_info_raw_url(processor: GistProcessor) -> None:
     """Test processing of already raw Gist URLs"""
