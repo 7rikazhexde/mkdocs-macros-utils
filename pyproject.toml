@@ -1,6 +1,6 @@
 [project]
 name = "mkdocs-macros-utils"
-version = "0.0.4"
+version = "0.0.5"
 description = "mkdocs-macros-utils is a mkdocs-macros-plugin based project that provides macros to extend cards, code blocks, etc, in MkDocs documents."
 authors = [
     {name = "7rikazhexde", email = "33836132+7rikazhexde@users.noreply.github.com"}
