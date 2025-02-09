@@ -15,12 +15,11 @@
 ### Install `mkdocs-macros-utils`
 
 ```bash
-# For venv
+# For pip
 pip install mkdocs-macros-utils
 
 # For poetry
 poetry add mkdocs-macros-utils
-poetry install
 ```
 
 ### Config settings
