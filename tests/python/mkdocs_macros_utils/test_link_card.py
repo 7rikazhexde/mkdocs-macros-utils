@@ -17,7 +17,7 @@ from mkdocs_macros_utils.link_card import (
     define_env,
 )
 from mkdocs_macros_utils.debug_logger import DebugLogger
-from tests import MockMacrosPlugin
+from tests.python import MockMacrosPlugin
 
 
 # -- Gist Content Tests ------------------------------

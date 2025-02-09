@@ -18,3 +18,5 @@ site/
 
 # node
 .yarn
+node_modules/
+coverage/

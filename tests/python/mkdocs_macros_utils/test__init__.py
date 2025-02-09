@@ -20,7 +20,7 @@ from mkdocs_macros_utils import (
     MACROS_UTILS_CSS,
     MACROS_UTILS_JS,
 )
-from tests import MockMacrosPlugin
+from tests.python import MockMacrosPlugin
 
 
 @pytest.fixture(autouse=True)
