@@ -3,9 +3,9 @@ name: Version Update and Release
 # Workflow Process Flow:
 # 1. Trigger Conditions:
 #    - Manual execution (workflow_dispatch)
-# 2. Environment Setup (Ubuntu, Python, Poetry)
-# 3. Retrieve the current version
-# 4. Update to the new version (patch, minor, or major)
+# 2. Environment Setup (Ubuntu, Python, Poetry, Node.js)
+# 3. Retrieve the current version from pyproject.toml and package.json
+# 4. Update to the new version (patch, minor, or major) for both files
 # 5. Commit and push the changes
 # 6. Create and push a new tag
 # 7. Generate the changelog
@@ -32,44 +32,61 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT_FOR_PUSHES }}
+
       - name: Set up Python
         uses: actions/setup-python@v5.3.0
         with:
           python-version: "3.13"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Install poetry
         run: |
           python -m pip install --upgrade pip
           pip install poetry
+
       - name: Configure Git
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+
       - name: Get current version
         id: current_version
-        run: echo "version=$(poetry version -s)" >> "$GITHUB_OUTPUT"
+        run: |
+          echo "python_version=$(poetry version -s)" >> "$GITHUB_OUTPUT"
+          echo "npm_version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
       - name: Update version
         id: update_version
         run: |
           poetry version ${{ github.event.inputs.update_type }}
+          npm version ${{ github.event.inputs.update_type }} --no-git-tag-version --no-commit-hooks
           echo "new_version=$(poetry version -s)" >> "$GITHUB_OUTPUT"
+
       - name: Commit and push if changed
         run: |
-          git add pyproject.toml
+          git add pyproject.toml package.json package-lock.json
           git commit -m ":wrench:Bump version to ${{ steps.update_version.outputs.new_version }}" || echo "No changes to commit"
           git push
+
       - name: Create and push new tag
         run: |
           git tag v${{ steps.update_version.outputs.new_version }}
           git push --tags
+
       - name: Generate changelog
         id: changelog
         run: |
-          changelog=$(git log --pretty=format:"- %s" v${{ steps.current_version.outputs.version }}..v${{ steps.update_version.outputs.new_version }})
+          changelog=$(git log --pretty=format:"- %s" v${{ steps.current_version.outputs.python_version }}..v${{ steps.update_version.outputs.new_version }})
           {
             echo "changelog<<EOF"
             echo "$changelog"
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
+
       - name: Create Release
         uses: softprops/action-gh-release@v2.2.0
         with:
@@ -80,7 +97,7 @@ jobs:
 
             ${{ steps.changelog.outputs.changelog }}
 
-            For full changes, see the [comparison view](${{ github.server_url }}/${{ github.repository }}/compare/v${{ steps.current_version.outputs.version }}..v${{ steps.update_version.outputs.new_version }})
+            For full changes, see the [comparison view](${{ github.server_url }}/${{ github.repository }}/compare/v${{ steps.current_version.outputs.python_version }}..v${{ steps.update_version.outputs.new_version }})
           draft: false
           prerelease: false
         env:
