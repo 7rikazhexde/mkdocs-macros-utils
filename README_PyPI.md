@@ -10,39 +10,20 @@
 - **Gist Code Block**: Embed and syntax-highlight code from GitHub Gists
 - **X/Twitter Card**: Embed tweets with proper styling and dark mode support
 
-## Installation
-
-Currently, the package can be installed from GitHub using Poetry:
-
-1. Add the dependency to your project's `pyproject.toml`
-
-    ```toml
-    [project]
-    dependencies = [
-        "mkdocs-macros-utils@git+https://github.com/7rikazhexde/mkdocs-macros-utils.git@main"
-    ]
-    ```
-
-    or
-
-    ```bash
-    poetry add "mkdocs-macros-utils@git+https://github.com/7rikazhexde/mkdocs-macros-utils.git@main"
-    ```
-
-2. To reflect the latest code, remove mkdocs-macros-utils once and then add it again.
-
-    ```bash
-    poetry remove mkdocs-macros-utils
-    poetry add "mkdocs-macros-utils@git+https://github.com/7rikazhexde/mkdocs-macros-utils.git#main"
-    ```
-
-3. Install using Poetry
-
-    ```bash
-    poetry install
-    ```
-
 ## Usage
+
+### Install `mkdocs-macros-utils`
+
+```bash
+# For venv
+pip install mkdocs-macros-utils
+
+# For poetry
+poetry add mkdocs-macros-utils
+poetry install
+```
+
+### Config settings
 
 1. Add the plugin to your `mkdocs.yml`
 

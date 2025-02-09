@@ -93,7 +93,7 @@ Create a link card based on the css settings and the values specified in the par
 {{ link_card(
     url="https://7rikazhexde.github.io/mkdocs-macros-utils/",
     title="Inkscape - 7rikazhexde PKM",
-    description="Inkscape関連のtipsをまとめる",
+    description="Inkscape tips",
     external=True,
     image_path="examples/images/inkscape.png"
 ) }}
@@ -103,7 +103,7 @@ Create a link card based on the css settings and the values specified in the par
 {{ link_card(
     url="https://7rikazhexde.github.io/mkdocs-macros-utils/",
     title="Inkscape - 7rikazhexde PKM",
-    description="Inkscape関連のtipsをまとめる",
+    description="Inkscape tips",
     external=True,
     image_path="examples/images/inkscape.png",
     svg_path="7rikazhexde/b57ab5c007c8fc5229b3b0aee72af702/simple-materialformkdocs.svg"
