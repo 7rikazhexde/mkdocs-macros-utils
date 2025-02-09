@@ -1,6 +1,6 @@
 # mkdocs-macros-utils
 
-`mkdocs-macros-utils` is [mkdocs-macros-plugin](https://mkdocs-macros-plugin.readthedocs.io/en/latest/) based project that provides macros to extend cards, code blocks, etc, in MkDocs documents.
+[mkdocs-macros-utils](https://pypi.org/project/mkdocs-macros-utils/) is [mkdocs-macros-plugin](https://mkdocs-macros-plugin.readthedocs.io/en/latest/) based project that provides macros to extend cards, code blocks, etc, in MkDocs documents.
 
 ## Features
 
@@ -10,7 +10,7 @@
 
 ## Usage
 
-### Install `mkdocs-macros-utils`
+### Install [mkdocs-macros-utils](https://pypi.org/project/mkdocs-macros-utils/)
 
 !!! info "For pip"
 
