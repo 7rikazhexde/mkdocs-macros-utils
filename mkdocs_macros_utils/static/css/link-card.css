@@ -152,13 +152,13 @@
 
 /* SVGアイコンのスタイル設定 */
 /* SVGパスのカラー設定 */
-.custom-link-card-image .svg-path {
+.custom-link-card-image .custom-link-card-icon {
     fill: #333333;
     /* ライトモードでのSVGの色 */
 }
 
 /* ダークモード時のSVGパスカラー */
-[data-md-color-scheme="slate"] .custom-link-card-image .svg-path {
+[data-md-color-scheme="slate"] .custom-link-card-image .custom-link-card-icon {
     fill: #ffffff;
     /* ダークモードでのSVGの色 */
 }

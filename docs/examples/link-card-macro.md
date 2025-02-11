@@ -150,7 +150,7 @@ If you want to display a custom SVG icon, specify the Gist path in the `svg_path
     !!! tip "About the SVG file to be used"
 
         - Create a gist in the following format (public release) and specify the `GistID` and `filename.svg` in the `link_card` parameter: `svg_path`.
-        - In case of specific colors (fill="#333" (gray),fill="black" (black)), replace with class="svg-path" considering light mode and dark mode display, and change colors by CSS targeting class="svg-path".
+        - In case of specific colors (fill="#333" (gray),fill="black" (black)), replace with class="custom-link-card-icon" considering light mode and dark mode display, and change colors by CSS targeting class="custom-link-card-icon".
         - To ensure consistent color transitions between light and dark modes, this code removes `fill-rule="evenodd"` and `clip-rule="evenodd"` attributes during SVG processing. If you need these styling effects, please consider using alternative SVG approaches.
 
         ```css

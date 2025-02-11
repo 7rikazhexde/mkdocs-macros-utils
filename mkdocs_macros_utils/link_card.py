@@ -207,8 +207,8 @@ def create_link_card(
     svg_html = ""
     if svg_content:
         svg_html = (
-            svg_content.replace('fill="#333"', 'class="svg-path"')
-            .replace('fill="black"', 'class="svg-path"')
+            svg_content.replace('fill="#333"', 'class="custom-link-card-icon"')
+            .replace('fill="black"', 'class="custom-link-card-icon"')
             .replace('fill-rule="evenodd"', "")
             .replace('clip-rule="evenodd"', "")
         )
