@@ -114,6 +114,7 @@ extra:
     link_card: false
     gist_codeblock: false
     x_twitter_card: false
+    svg_gist: false
 
 extra_css:
   - stylesheets/macros-utils/link-card.css

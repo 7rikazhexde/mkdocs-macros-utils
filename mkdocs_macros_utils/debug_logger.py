@@ -57,6 +57,7 @@ class DebugLogger:
             "link_card": debug_config.get("link_card", False),
             "gist_codeblock": debug_config.get("gist_codeblock", False),
             "x_twitter_card": debug_config.get("x_twitter_card", False),
+            "svg_gist": debug_config.get("svg_gist", False),
         }
 
     def __init__(self, module_name: str, enabled: bool = False) -> None:

@@ -13,6 +13,7 @@ from mkdocs_macros.plugin import MacrosPlugin
 from . import link_card
 from . import gist_codeblock
 from . import x_twitter_card
+from . import get_svg_gist
 
 logger = logging.getLogger("mkdocs.plugins.macros-utils")
 
@@ -99,6 +100,7 @@ def define_env(env: MacrosPlugin) -> None:
         link_card.define_env(env)
         gist_codeblock.define_env(env)
         x_twitter_card.define_env(env)
+        get_svg_gist.define_env(env)
 
         logger.info("MkDocs Macros Utils initialized successfully")
 
