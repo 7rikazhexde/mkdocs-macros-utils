@@ -1,6 +1,6 @@
 {
   "name": "mkdocs-macros-utils",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "`mkdocs-macros-utils` is [mkdocs-macros-plugin](https://mkdocs-macros-plugin.readthedocs.io/en/latest/) based project that provides macros to extend cards, code blocks, etc, in MkDocs documents.",
   "main": "index.js",
   "directories": {
@@ -24,8 +24,8 @@
   },
   "homepage": "https://github.com/7rikazhexde/mkdocs-macros-utils#readme",
   "devDependencies": {
-    "@babel/core": "^7.26.8",
-    "@babel/preset-env": "^7.26.8",
+    "@babel/core": "^7.26.9",
+    "@babel/preset-env": "^7.26.9",
     "babel-jest": "^29.7.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0"
