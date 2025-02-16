@@ -1,0 +1,238 @@
+name: Test Multi-OS
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'project_a/**'
+      - 'tests/**'
+      - 'pyproject.toml'
+      - 'poetry.lock'
+      - 'requirements-dev.txt'
+      - 'requirements.txt'
+
+jobs:
+  set_variables:
+    if: ( !startsWith(github.event.head_commit.message, 'Bump version') && !startsWith(github.event.head_commit.message, '[skip ci]') )
+    runs-on: ubuntu-latest
+    outputs:
+      os: ${{ steps.json2vars.outputs.os }}
+      versions_python: ${{ steps.json2vars.outputs.versions_python }}
+      ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Set variables from JSON
+        id: json2vars
+        uses: 7rikazhexde/json2vars-setter@main
+
+      - name: Debug output values
+        run: |
+          echo "os: ${{ steps.json2vars.outputs.os }}"
+          echo "versions_python: ${{ steps.json2vars.outputs.versions_python }}"
+          echo "ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}"
+
+  check_file:
+    needs: set_variables
+    runs-on: ubuntu-latest
+    outputs:
+      file_exists: ${{ steps.check_file.outputs.file_exists }}
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - name: Check file existence
+        id: check_file
+        run: |
+          if [ -f "project_a/staking/ton_whales_staking_dashboard.py" ]; then
+            echo "file_exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "file_exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  test:
+    needs: [set_variables, check_file]
+    strategy:
+      matrix:
+        os: ${{ fromJson(needs.set_variables.outputs.os) }}
+        python-version: ${{ fromJson(needs.set_variables.outputs.versions_python) }}
+    runs-on: ${{ matrix.os }}
+    env:
+      TZ: 'Asia/Tokyo'
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - name: Set up Python
+        uses: actions/setup-python@v5.4.0
+        with:
+          python-version: ${{matrix.python-version}}
+      - name: Set timezone
+        uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Asia/Tokyo"
+          timezoneMacos: "Asia/Tokyo"
+          timezoneWindows: "Tokyo Standard Time"
+      - name: Check timezone
+        shell: bash
+        run: |
+          echo "System date: $(date)"
+          echo "TZ environment variable: ${TZ}"
+          python -c "import datetime, platform; print(f'Python timezone: {datetime.datetime.now().astimezone().tzinfo}'); print(f'OS: {platform.system()}')"
+      - name: Install poetry
+        run: pip install poetry
+      - name: Cache dependencies
+        uses: actions/cache@v4.2.0
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+      - name: Install dependencies
+        run: poetry install
+      - name: Run test
+        id: pytest
+        #continue-on-error: true
+        # Mac / Linux
+        # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | tee pytest-coverage.txt
+        # Windowss
+        # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | Tee-Object -FilePath pytest-coverage.txt
+        run: poetry run task test_ci_xml
+      - name: Pytest coverage comment
+        id: coverageComment
+        uses: MishaKav/pytest-coverage-comment@v1.1.53
+        with:
+          pytest-coverage-path: ./pytest-coverage.txt
+          pytest-xml-coverage-path: ./coverage.xml
+          title: Coverage Report (${{ matrix.os }} / Python ${{ matrix.python-version }})
+          badge-title: coverage
+          hide-badge: false
+          hide-report: false
+          create-new-comment: false
+          hide-comment: false
+          report-only-changed-files: false
+          remove-link-from-badge: false
+          junitxml-path: ./pytest.xml
+          junitxml-title: "Pytest Result Summary (os: ${{ matrix.os }} / python-version: ${{ matrix.python-version }})"
+          github-token: ${{ secrets.PAT_FOR_PUSHES }}
+      - name: Check test results
+        if: steps.pytest.outcome == 'failure'
+        run: |
+          echo "Tests failed. This will prevent merging the pull request."
+          exit 1
+      - name: Save summary report
+        run: |
+          echo '${{ steps.coverageComment.outputs.summaryReport }}' > summary-report.md
+      - name: Upload coverage data
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: coverage-data-${{ matrix.os }}-${{ matrix.python-version }}
+          path: |
+            pytest-coverage.txt
+            coverage.xml
+            pytest.xml
+            summary-report.md
+
+  update_readme:
+    needs: [set_variables, check_file, test]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4.1.8
+      - name: Update README in coverage branch
+        run: |
+          # GitHub Actionsの変数形式で設定
+          os='${{ needs.set_variables.outputs.os }}'
+          python_versions='${{ needs.set_variables.outputs.versions_python }}'
+
+          # JSON形式の文字列から配列を作成
+          os_list=$(echo "${os}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+          python_versions_list=$(echo "${python_versions}" | jq -r '.[]' | tr '\n' ' ' | sed 's/ $//')
+
+          # "coverage" ブランチが存在する場合はチェックアウト、存在しない場合は新規作成する
+          if git ls-remote --heads origin coverage | grep coverage; then
+            git checkout coverage
+          else
+            git checkout --orphan coverage
+            git rm -rf .
+          fi
+
+          # README.mdの内容を一度に生成
+          {
+            echo "# Pytest Coverages Summary"
+            echo "[![](https://github.com/${GITHUB_REPOSITORY}/actions/workflows/test_multi_os.yml/badge.svg)](https://github.com/${GITHUB_REPOSITORY}/actions/workflows/test_multi_os.yml)"
+            echo ""
+
+            # 最新のコミット情報をREADMEに追加
+            commit_hash8=${GITHUB_SHA::8}
+            commit_link="[${commit_hash8}](https://github.com/${GITHUB_REPOSITORY}/tree/${commit_hash8})"
+            echo -e "> [!Note]"
+            echo -e "> "
+            echo -e "> Commit: ${commit_link}"
+            echo -e ""
+
+            # テスト対象外のファイルに関する注記を追加（ファイルの存在確認結果に基づく）
+            commit_hash=${GITHUB_SHA}
+            file_path_1="project_a/staking/ton_whales_staking_dashboard.py"
+            file_path_2="staking/ton_whales_staking_dashboard.py"
+            file_link="https://github.com/${GITHUB_REPOSITORY}/blob/${commit_hash}/${file_path_2}"
+
+            if [[ "${{ needs.check_file.outputs.file_exists }}" == "true" ]]; then
+              echo -e "> [!Important]"
+              echo -e "> The following file is intentionally excluded from test coverage:"
+              echo -e "> - [${file_path_1}](${file_link})"
+              echo -e "> "
+              echo -e "> This file contains complex external dependencies and is verified through manual and integration testing."
+              echo -e "> "
+            else
+              echo "Note: File ${file_path_1} not found. Skipping addition to README.md." >&2
+            fi
+
+            # macOS、Ubuntu、Windowsの各OSとPythonバージョンごとにカバレッジレポートを追加
+            for os in ${os_list}; do
+              for version in ${python_versions_list}; do
+                echo "## Coverage Report (os: ${os} / python-version: ${version})"
+                if [ -f "coverage-data-${os}-${version}/summary-report.md" ]; then
+                  sed -e 's/^"//' -e 's/"$//' -e 's/\\"/"/g' -e 's/\\\\/\\/g' -e 's/\\n/\n/g' -e 's/\r$//' "coverage-data-${os}-${version}/summary-report.md" |
+                  sed -e 's/&lt;/</g' -e 's/&gt;/>/g' -e 's/&amp;/\&/g' |
+                  sed '/^$/N;/^\n$/D' |
+                  sed -e 's/^"//' -e 's/"$//'
+                else
+                  echo "No summary report found for ${os} - ${version}"
+                fi
+                echo ""
+              done
+            done
+          } > README.md
+
+          # カバレッジレポート内のリンクを有効にするためにファイルパスを修正する
+          sed -i '
+            s|/blob/undefined/\([^"]*\)|/blob/'"${commit_hash}"'/\1|g;
+            s|/blob/\([a-f0-9]*\)/\([^"]*\)|/blob/\1/project_a/\2|g;
+            s|/blob/\([a-f0-9]*\)/project_a/README\.md|/blob/\1/README.md|g
+          ' README.md
+      - name: Commit and push
+        run: |
+          # Gitのユーザー設定とコミット、ブランチへのプッシュ
+          git config --local user.email "33836132+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add README.md
+          git commit -m "Update coverage for all environments"
+          git push origin coverage
+
+  check_all_tests:
+    needs: [set_variables, check_file, test, update_readme]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check test results
+        if: contains(needs.test.result, 'failure')
+        run: |
+          echo "Some tests failed. Please check the test results and fix any issues before merging."
+          exit 1
