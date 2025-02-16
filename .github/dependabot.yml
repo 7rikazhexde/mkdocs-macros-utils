@@ -13,7 +13,7 @@ updates:
 
   # Node.js dependencies
   - package-ecosystem: "npm"
-    directory: "/examples/nodejs"
+    directory: "/"
     schedule:
       interval: "daily"
     groups:
