@@ -59,8 +59,5 @@ warn_redundant_casts = true
 module = ["mkdocs.*","mkdocs_macros.*","jinja2.*","ruamel.*","pygments.*"]
 ignore_missing_imports = true
 
-[project.entry-points."mkdocs.plugins"]
-"macros-utils" = "mkdocs_macros_utils:define_env"
-
 [tool.pytest.ini_options]
 testpaths = ["tests/python"]
