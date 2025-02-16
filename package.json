@@ -24,8 +24,8 @@
   },
   "homepage": "https://github.com/7rikazhexde/mkdocs-macros-utils#readme",
   "devDependencies": {
-    "@babel/core": "^7.26.8",
-    "@babel/preset-env": "^7.26.8",
+    "@babel/core": "^7.26.9",
+    "@babel/preset-env": "^7.26.9",
     "babel-jest": "^29.7.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0"
