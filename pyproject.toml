@@ -1,30 +1,67 @@
-[project]
-name = "mkdocs-macros-utils"
-version = "0.0.7"
-description = "mkdocs-macros-utils is a mkdocs-macros-plugin based project that provides macros to extend cards, code blocks, etc, in MkDocs documents."
-authors = [
-    {name = "7rikazhexde", email = "33836132+7rikazhexde@users.noreply.github.com"}
-]
-license = {text = "MIT"}
-readme = "README_PyPI.md"
-requires-python = ">=3.10"
-dependencies = [
-    "mkdocs-macros-plugin>=1.3.7,<2.0.0",
-    "mkdocs-material>=9.6.1,<10.0.0",
-    "requests>=2.25.0",
-    "jinja2>=3.0.0",
-    "pygments>=2.19.1",
-]
+#[project]
+#name = "mkdocs-macros-utils"
+#version = "0.0.7"
+#description = "mkdocs-macros-utils is a mkdocs-macros-plugin based project that provides macros to extend cards, code blocks, etc, in MkDocs documents."
+#authors = [
+#    {name = "7rikazhexde", email = "33836132+7rikazhexde@users.noreply.github.com"}
+#]
+#license = {text = "MIT"}
+#readme = "README_PyPI.md"
+#requires-python = ">=3.10,<4.0"
+## Core dependencies for the package
+#dependencies = [
+#    "mkdocs-macros-plugin>=1.3.7,<2.0.0",
+#    "mkdocs-material>=9.6.1,<10.0.0",
+#    "requests>=2.25.0",
+#    "jinja2>=3.0.0",
+#    "pygments>=2.19.1",
+#]
+#
+## Optional dependencies for development
+#[project.optional-dependencies]
+#dev = [
+#    "pytest>=8.3.4",
+#    "mypy>=1.14.1",
+#    "ruff>=0.9.4",
+#    "pre-commit>=4.1.0",
+#    "pytest-cov>=6.0.0",
+#    "pytest-mock>=3.14.0",
+#    "pytest-xdist>=3.6.1",
+#    "taskipy>=1.14.1",
+#]
+#
+#[project.urls]
+#homepage = "https://github.com/7rikazhexde/mkdocs-macros-utils"
+#repository = "https://github.com/7rikazhexde/mkdocs-macros-utils"
+#documentation = "https://7rikazhexde.github.io/mkdocs-macros-utils/"
 
-[project.urls]
-homepage = "https://github.com/7rikazhexde/mkdocs-macros-utils"
-repository = "https://github.com/7rikazhexde/mkdocs-macros-utils"
-documentation = "https://7rikazhexde.github.io/mkdocs-macros-utils/"
-
+# Build system configuration
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.poetry]
+name = "mkdocs-macros-utils"
+version = "0.0.7.post1"
+description = "mkdocs-macros-utils is a mkdocs-macros-plugin based project that provides macros to extend cards, code blocks, etc, in MkDocs documents."
+authors = ["7rikazhexde <33836132+7rikazhexde@users.noreply.github.com>"]
+packages = [
+    { include = "mkdocs_macros_utils" }
+]
+readme = "README_PyPI.md"
+homepage = "https://github.com/7rikazhexde/mkdocs-macros-utils"
+repository = "https://github.com/7rikazhexde/mkdocs-macros-utils"
+documentation = "https://7rikazhexde.github.io/mkdocs-macros-utils/"
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+mkdocs-macros-plugin = ">=1.3.7,<2.0.0"
+mkdocs-material = ">=9.6.1,<10.0.0"
+requests = ">=2.25.0"
+jinja2 = ">=3.0.0"
+pygments = ">=2.19.1"
+
+# Development dependencies - these are not included in the final package
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"
 mypy = "^1.14.1"
@@ -33,8 +70,9 @@ pre-commit = "^4.1.0"
 pytest-cov = "^6.0.0"
 pytest-mock = "^3.14.0"
 pytest-xdist = "^3.6.1"
-taskipy = {version = "^1.14.1", python = ">=3.10,<4.0"}
+taskipy = "^1.14.1"
 
+# Task runner configuration
 [tool.taskipy.tasks]
 test_coverage_verbose = "pytest -s -vv --cov=mkdocs_macros_utils --cov-branch --cov-report term-missing --cov-report html"
 test_html_report = "pytest --html=htmlcov/report_page.html"
@@ -42,6 +80,7 @@ test_ci_xml = "python scripts/run_tests.py --report xml"
 test_ci_term = "python scripts/run_tests.py --report term"
 test_coverage = "pytest --cov=mkdocs_macros_utils --cov-branch --cov-report=term-missing --cov-report=html"
 
+# Type checking configuration
 [tool.mypy]
 files = ["mkdocs_macros_utils", "tests"]
 explicit_package_bases = true
@@ -59,5 +98,6 @@ warn_redundant_casts = true
 module = ["mkdocs.*","mkdocs_macros.*","jinja2.*","ruamel.*","pygments.*"]
 ignore_missing_imports = true
 
+# Test configuration
 [tool.pytest.ini_options]
 testpaths = ["tests/python"]
