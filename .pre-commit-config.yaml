@@ -32,18 +32,19 @@ repos:
       - id: poetry-lock
         verbose: true
 
+  # [Note] poetry export is not done in pre-commit, but in GitHub Actions (update-requirements-after-dependabot.yml)
   # https://github.com/python-poetry/poetry-plugin-export?tab=readme-ov-file#usage
-  - repo: https://github.com/python-poetry/poetry-plugin-export.git
-    rev: 1.9.0
-    hooks:
-      - id: poetry-export
-        args: ["-f", "requirements.txt", "-o", "requirements.txt", "--without-hashes"]
-        verbose: true
-        files: ^pyproject\.toml$
-      - id: poetry-export
-        args: ["--with", "dev", "-f", "requirements.txt", "-o", "requirements-dev.txt", "--without-hashes"]
-        verbose: true
-        files: ^pyproject\.toml$
+  #- repo: https://github.com/python-poetry/poetry-plugin-export.git
+  #  rev: 1.9.0
+  #  hooks:
+  #    - id: poetry-export
+  #      args: ["-f", "requirements.txt", "-o", "requirements.txt", "--without-hashes"]
+  #      verbose: true
+  #      files: ^pyproject\.toml$
+  #    - id: poetry-export
+  #      args: ["--with", "dev", "-f", "requirements.txt", "-o", "requirements-dev.txt", "--without-hashes"]
+  #      verbose: true
+  #      files: ^pyproject\.toml$
 
   # https://github.com/shellcheck-py/shellcheck-py?tab=readme-ov-file#usage
   - repo: https://github.com/shellcheck-py/shellcheck-py

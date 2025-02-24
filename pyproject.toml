@@ -1,3 +1,4 @@
+# For poetry versiion(>=2.0.0)
 #[project]
 #name = "mkdocs-macros-utils"
 #version = "0.0.7"
@@ -35,11 +36,7 @@
 #repository = "https://github.com/7rikazhexde/mkdocs-macros-utils"
 #documentation = "https://7rikazhexde.github.io/mkdocs-macros-utils/"
 
-# Build system configuration
-[build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
-
+# For poetry versiion(<2.0.0)
 [tool.poetry]
 name = "mkdocs-macros-utils"
 version = "0.0.7"
@@ -72,6 +69,11 @@ pytest-mock = "^3.14.0"
 pytest-xdist = "^3.6.1"
 taskipy = "^1.14.1"
 
+# Build system configuration
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 # Task runner configuration
 [tool.taskipy.tasks]
 test_coverage_verbose = "pytest -s -vv --cov=mkdocs_macros_utils --cov-branch --cov-report term-missing --cov-report html"
@@ -94,6 +96,7 @@ warn_return_any = true
 warn_unused_ignores = true
 warn_redundant_casts = true
 
+# Overrides mypy ignore import settings
 [[tool.mypy.overrides]]
 module = ["mkdocs.*","mkdocs_macros.*","jinja2.*","ruamel.*","pygments.*"]
 ignore_missing_imports = true
