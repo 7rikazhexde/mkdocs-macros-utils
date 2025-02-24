@@ -5,7 +5,7 @@ on:
     branches:
       - 'main'
     paths:
-      - 'project_a/**'
+      - 'mkdocs_macros_utils/**'
       - 'tests/**'
       - 'pyproject.toml'
       - 'poetry.lock'
@@ -46,7 +46,7 @@ jobs:
       - name: Check file existence
         id: check_file
         run: |
-          if [ -f "project_a/staking/ton_whales_staking_dashboard.py" ]; then
+          if [ -f "mkdocs_macros_utils/staking/ton_whales_staking_dashboard.py" ]; then
             echo "file_exists=true" >> "$GITHUB_OUTPUT"
           else
             echo "file_exists=false" >> "$GITHUB_OUTPUT"
@@ -95,9 +95,9 @@ jobs:
         id: pytest
         #continue-on-error: true
         # Mac / Linux
-        # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | tee pytest-coverage.txt
+        # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=mkdocs_macros_utils tests/ | tee pytest-coverage.txt
         # Windowss
-        # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=project_a tests/ | Tee-Object -FilePath pytest-coverage.txt
+        # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=mkdocs_macros_utils tests/ | Tee-Object -FilePath pytest-coverage.txt
         run: poetry run task test_ci_xml
       - name: Pytest coverage comment
         id: coverageComment
@@ -180,7 +180,7 @@ jobs:
 
             # テスト対象外のファイルに関する注記を追加（ファイルの存在確認結果に基づく）
             commit_hash=${GITHUB_SHA}
-            file_path_1="project_a/staking/ton_whales_staking_dashboard.py"
+            file_path_1="mkdocs_macros_utils/staking/ton_whales_staking_dashboard.py"
             file_path_2="staking/ton_whales_staking_dashboard.py"
             file_link="https://github.com/${GITHUB_REPOSITORY}/blob/${commit_hash}/${file_path_2}"
 
@@ -215,8 +215,8 @@ jobs:
           # カバレッジレポート内のリンクを有効にするためにファイルパスを修正する
           sed -i '
             s|/blob/undefined/\([^"]*\)|/blob/'"${commit_hash}"'/\1|g;
-            s|/blob/\([a-f0-9]*\)/\([^"]*\)|/blob/\1/project_a/\2|g;
-            s|/blob/\([a-f0-9]*\)/project_a/README\.md|/blob/\1/README.md|g
+            s|/blob/\([a-f0-9]*\)/\([^"]*\)|/blob/\1/mkdocs_macros_utils/\2|g;
+            s|/blob/\([a-f0-9]*\)/mkdocs_macros_utils/README\.md|/blob/\1/README.md|g
           ' README.md
       - name: Commit and push
         run: |
