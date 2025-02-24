@@ -29,3 +29,6 @@ site/
 .yarn
 node_modules/
 coverage/
+
+# act
+.secrets

@@ -129,10 +129,13 @@ def test_on_files() -> None:
     config = Config(schema=[])
     result = on_files(files, config)
 
+    # Normalize paths to use forward slashes for consistent comparison
+    paths = [f.src_path.replace("\\", "/") for f in result]
+    expected_style_css = f"{MACROS_UTILS_DIR}/style.css".replace("\\", "/")
+
     # Verify files are processed correctly
-    paths = [f.src_path for f in result]
     assert "test.md" in paths
-    assert f"{MACROS_UTILS_DIR}/style.css" in paths
+    assert expected_style_css in paths
     assert "other/file.md" in paths
 
 

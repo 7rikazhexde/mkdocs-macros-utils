@@ -1,0 +1,20 @@
+{
+    "pull_request": {
+        "title": "Test PR for Local Testing",
+        "number": 1,
+        "head": {
+            "ref": "feature-branch"
+        }
+    },
+    "sender": {
+        "login": "testuser"
+    },
+    "repository": {
+        "full_name": "yourusername/yourrepo"
+    },
+    "event_name": "pull_request",
+    "ref": "refs/pull/1/merge",
+    "github": {
+        "actor": "testuser"
+    }
+}
