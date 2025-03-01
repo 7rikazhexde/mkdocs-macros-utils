@@ -98,7 +98,7 @@ jobs:
         # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=mkdocs_macros_utils tests/ | tee pytest-coverage.txt
         # Windowss
         # run: poetry run pytest --durations=0 --junitxml=pytest.xml --cov-report xml:coverage.xml --cov=mkdocs_macros_utils tests/ | Tee-Object -FilePath pytest-coverage.txt
-        run: poetry run task test_ci_xml
+        run: poetry run task testcixml
       - name: Pytest coverage comment
         id: coverageComment
         uses: MishaKav/pytest-coverage-comment@v1.1.53

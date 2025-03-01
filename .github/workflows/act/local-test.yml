@@ -23,7 +23,7 @@ jobs:
           poetry install
 
           # テスト実行とカバレッジレポート
-          poetry run task test_ci_xml
+          poetry run task testcixml
 
           # poetryの環境内でcoverageを実行
           poetry run coverage report
