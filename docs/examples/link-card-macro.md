@@ -91,7 +91,7 @@ Create a link card based on the css settings and the values specified in the par
 ##### Specify image_path
 
 {{ link_card(
-    url="https://7rikazhexde.github.io/mkdocs-macros-utils/",
+    url="https://7rikazhexde-pkm-obsidian-mkdocs.netlify.app/ja/development/tools/design/inkscape/",
     title="Inkscape - 7rikazhexde PKM",
     description="Inkscape tips",
     external=True,
@@ -101,7 +101,7 @@ Create a link card based on the css settings and the values specified in the par
 ##### Specify svg_path
 
 {{ link_card(
-    url="https://7rikazhexde.github.io/mkdocs-macros-utils/",
+    url="https://7rikazhexde-pkm-obsidian-mkdocs.netlify.app/ja/development/tools/design/inkscape/",
     title="Inkscape - 7rikazhexde PKM",
     description="Inkscape tips",
     external=True,
