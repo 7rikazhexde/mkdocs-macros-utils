@@ -145,7 +145,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download all artifacts
-        uses: actions/download-artifact@v4.2.1
+        uses: actions/download-artifact@v4.3.0
       - name: Update README in coverage branch
         run: |
           # GitHub Actionsの変数形式で設定
