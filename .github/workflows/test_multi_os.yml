@@ -125,7 +125,7 @@ jobs:
         run: |
           echo '${{ steps.coverageComment.outputs.summaryReport }}' > summary-report.md
       - name: Upload coverage data
-        uses: actions/upload-artifact@v4.6.2
+        uses: actions/upload-artifact@v5.0.0
         with:
           name: coverage-data-${{ matrix.os }}-${{ matrix.python-version }}
           path: |
@@ -145,7 +145,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Download all artifacts
-        uses: actions/download-artifact@v5.0.0
+        uses: actions/download-artifact@v6.0.0
       - name: Update README in coverage branch
         run: |
           # GitHub Actionsの変数形式で設定
