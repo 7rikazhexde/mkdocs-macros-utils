@@ -36,7 +36,7 @@ jobs:
       ghpages_branch: ${{ steps.json2vars.outputs.ghpages_branch }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -65,7 +65,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
