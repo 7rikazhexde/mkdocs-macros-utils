@@ -62,7 +62,7 @@ pygments = ">=2.19.1"
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8.3.4,<10.0.0"
 mypy = "^1.14.1"
-ruff = ">=0.9.4,<0.15.0"
+ruff = ">=0.9.4,<0.16.0"
 pre-commit = "^4.1.0"
 pytest-cov = ">=6,<8"
 pytest-mock = "^3.14.0"
