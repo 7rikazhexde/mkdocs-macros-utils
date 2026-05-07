@@ -61,7 +61,7 @@ pygments = ">=2.19.1"
 # Development dependencies - these are not included in the final package
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8.3.4,<10.0.0"
-mypy = "^1.14.1"
+mypy = ">=1.14.1,<3.0.0"
 ruff = ">=0.9.4,<0.16.0"
 pre-commit = "^4.1.0"
 pytest-cov = ">=6,<8"
