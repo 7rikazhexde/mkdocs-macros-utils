@@ -1,5 +1,5 @@
 """
-MkDocs Macros Plugin for displaying X/Twitter link cards.
+Zensical macros module for displaying X/Twitter link cards.
 """
 
 from typing import Optional
@@ -60,7 +60,7 @@ def create_x_twitter_card(url: str, env: Optional[MacroEnv] = None) -> str:
 
     Args:
         url (str): X tweet URL
-        env (Optional[MacroEnv], optional): MkDocs macro environment
+        env (Optional[MacroEnv], optional): zensical macro environment
 
     Returns:
         str: Widget HTML
@@ -93,7 +93,7 @@ def create_x_twitter_card(url: str, env: Optional[MacroEnv] = None) -> str:
 
 def define_env(env: MacroEnv) -> None:
     """
-    Define x_twitter_card macro in MkDocs macro environment
+    Define x_twitter_card macro in zensical macro environment
 
     Args:
         env (MacroEnv): Macro plugin environment
@@ -102,7 +102,7 @@ def define_env(env: MacroEnv) -> None:
     @env.macro
     def x_twitter_card(url: str) -> str:
         """
-        MkDocs macro to generate widget HTML from X tweet URL
+        Zensical macro to generate widget HTML from X tweet URL
 
         Args:
             url (str): X tweet URL

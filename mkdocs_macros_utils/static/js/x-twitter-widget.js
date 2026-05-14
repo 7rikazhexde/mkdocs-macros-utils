@@ -162,7 +162,7 @@
   }
 
   /**
-   * Sets up an observer to detect color scheme changes in Material for MkDocs.
+   * Sets up an observer to detect color scheme changes in zensical.
    *
    * Monitors changes to data-md-color-scheme attributes on HTML and body elements,
    * as well as changes in the palette component.

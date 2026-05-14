@@ -48,7 +48,7 @@
 /* カードのタイトル部分 */
 /*
 タイトルの色設定について：
-1. 現在の設定：MkDocs Materialのテーマカラーに連動
+1. 現在の設定：zensicalのテーマカラーに連動
    - ライトモード: var(--md-primary-fg-color)
    - ダークモード: var(--md-primary-fg-color--light)
 

@@ -73,7 +73,7 @@ The module exports `define_env(env: MacroEnv)` called by zensical's macros exten
 - Copies CSS/JS static assets into `docs/` via `copy_static_files()` (skips if already up-to-date)
 - Registers the three macros by calling each sub-module's `define_env`
 
-Use `MKDOCS_DOCS_DIR` env var to override the default `docs/` target directory.
+Use `MACROS_UTILS_DOCS_DIR` env var to override the default `docs/` target directory.
 
 ### Macro Modules
 

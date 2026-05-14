@@ -1,5 +1,5 @@
 """
-MkDocs Macros Plugin for displaying custom link cards.
+Zensical macros module for displaying custom link cards.
 """
 
 from typing import Optional
@@ -137,7 +137,7 @@ def create_link_card(
         domain (Optional[str], optional): Domain name. Auto-extracted from URL if not specified.
         external (bool, optional): External link flag. Defaults to False.
         svg_path (Optional[str], optional): Custom SVG path in format "user_id/gist_id/filename". Defaults to None.
-        env (Optional[MacroEnv], optional): MkDocs macro environment. Defaults to None.
+        env (Optional[MacroEnv], optional): zensical macro environment. Defaults to None.
 
     Returns:
         str: Rendered link card HTML
@@ -249,7 +249,7 @@ def create_link_card(
 
 def define_env(env: MacroEnv) -> None:
     """
-    Define link_card macro in MkDocs macro environment
+    Define link_card macro in zensical macro environment
 
     Args:
         env (MacroEnv): Macro plugin environment
@@ -266,7 +266,7 @@ def define_env(env: MacroEnv) -> None:
         svg_path: Optional[str] = None,
     ) -> str:
         """
-        MkDocs macro to create a link card
+        Zensical macro to create a link card
 
         Args:
             url (str): Target URL

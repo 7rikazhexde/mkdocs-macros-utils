@@ -1,5 +1,5 @@
 """
-MkDocs Macros Cards plugin for enhanced documentation components.
+Zensical macros module for enhanced documentation components.
 """
 
 from pathlib import Path
@@ -13,7 +13,7 @@ from . import link_card
 from . import gist_codeblock
 from . import x_twitter_card
 
-logger = logging.getLogger("mkdocs.plugins.macros-utils")
+logger = logging.getLogger("zensical.macros-utils")
 
 MACROS_UTILS_DIR = "stylesheets/macros-utils"
 MACROS_UTILS_CSS = ["link-card.css", "gist-cb.css", "x-twitter-link-card.css"]
@@ -58,9 +58,9 @@ def copy_static_files(plugin_dir: Path, docs_dir: Path) -> None:
 def _get_docs_dir() -> Path:
     """Return the docs directory path.
 
-    Checks MKDOCS_DOCS_DIR env var first, then defaults to 'docs' relative to CWD.
+    Checks MACROS_UTILS_DOCS_DIR env var first, then defaults to 'docs' relative to CWD.
     """
-    docs_dir_env = os.environ.get("MKDOCS_DOCS_DIR", "docs")
+    docs_dir_env = os.environ.get("MACROS_UTILS_DOCS_DIR", "docs")
     path = Path(docs_dir_env)
     if not path.is_absolute():
         path = Path(os.getcwd()) / path
@@ -90,7 +90,7 @@ def _load_extra_config() -> Dict[str, Any]:
 
 def define_env(env: MacroEnv) -> None:
     """
-    MkDocsマクロプラグインの環境を定義する
+    Zensicalマクロモジュールの環境を定義する
     """
     plugin_dir = Path(__file__).parent
 
@@ -112,7 +112,7 @@ def define_env(env: MacroEnv) -> None:
         gist_codeblock.define_env(env)
         x_twitter_card.define_env(env)
 
-        logger.info("MkDocs Macros Utils initialized successfully")
+        logger.info("Zensical macros utils initialized successfully")
 
     except Exception as e:
-        logger.error(f"Failed to initialize MkDocs Macros Utils: {e}")
+        logger.error(f"Failed to initialize zensical macros utils: {e}")
