@@ -4,7 +4,7 @@ MkDocs Macros Cards Debug Logger Module
 
 import logging
 from typing import Optional, Any, Dict
-from mkdocs_macros.plugin import MacrosPlugin
+from zensical.extensions.macros import MacroEnv
 
 
 class DebugLogger:
@@ -16,14 +16,14 @@ class DebugLogger:
 
     @classmethod
     def create_logger(
-        cls, module_name: str, env: Optional[MacrosPlugin] = None
+        cls, module_name: str, env: Optional[MacroEnv] = None
     ) -> "DebugLogger":
         """
         Create loggers based on preferences
 
         Args: (str): Module name of the logger
             module_name (str): Logger module name
-            env (Optional[MacrosPlugin], optional): MkDocs macro environment. Defaults to None.
+            env (Optional[MacroEnv], optional): MkDocs macro environment. Defaults to None.
 
         Returns: Args: module_name (str): Module name of the logger.
             DebugLogger: Debug logger instance initialized.
@@ -37,12 +37,12 @@ class DebugLogger:
         return cls(module_name, module_debug)
 
     @classmethod
-    def _get_debug_config(cls, env: Optional[MacrosPlugin] = None) -> Dict[str, bool]:
+    def _get_debug_config(cls, env: Optional[MacroEnv] = None) -> Dict[str, bool]:
         """
         Get debug settings
 
         Args:.
-            env (Optional[MacrosPlugin], optional): MkDocs macro environment. Defaults to None.
+            env (Optional[MacroEnv], optional): MkDocs macro environment. Defaults to None.
 
         Returns:
             Dict[str, bool]: Debug settings

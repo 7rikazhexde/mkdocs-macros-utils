@@ -4,7 +4,7 @@ Tests for Debug Logger module in MkDocs Macros Utils
 
 import pytest
 from _pytest.logging import LogCaptureFixture
-from tests.python import MockMacrosPlugin
+from tests.python import MockMacroEnv
 from mkdocs_macros_utils.debug_logger import DebugLogger
 
 
@@ -17,7 +17,7 @@ def test_create_logger_without_env() -> None:
 
 
 @pytest.mark.debug
-def test_create_logger_with_env(mock_env: MockMacrosPlugin) -> None:
+def test_create_logger_with_env(mock_env: MockMacroEnv) -> None:
     """Test creating a logger with an environment that has debug settings"""
     # Test for a module with debug enabled
     logger = DebugLogger.create_logger("link_card", mock_env)
@@ -38,7 +38,7 @@ def test_get_debug_config_without_env() -> None:
 
 
 @pytest.mark.debug
-def test_get_debug_config_with_env(mock_env: MockMacrosPlugin) -> None:
+def test_get_debug_config_with_env(mock_env: MockMacroEnv) -> None:
     """Test getting debug configuration from a mock environment"""
     config = DebugLogger._get_debug_config(mock_env)
     assert config == {"link_card": True, "gist_codeblock": True, "x_twitter_card": True}
@@ -84,7 +84,7 @@ def test_log_with_string_data(caplog: LogCaptureFixture) -> None:
 
 
 @pytest.mark.debug
-def test_create_logger_unknown_module(mock_env: MockMacrosPlugin) -> None:
+def test_create_logger_unknown_module(mock_env: MockMacroEnv) -> None:
     """Test creating a logger for an unknown module"""
     logger = DebugLogger.create_logger("unknown_module", mock_env)
     assert logger.enabled is False

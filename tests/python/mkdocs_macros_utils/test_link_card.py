@@ -17,7 +17,7 @@ from mkdocs_macros_utils.link_card import (
     define_env,
 )
 from mkdocs_macros_utils.debug_logger import DebugLogger
-from tests.python import MockMacrosPlugin
+from tests.python import MockMacroEnv
 
 
 # -- Gist Content Tests ------------------------------
@@ -168,7 +168,7 @@ def test_clean_url_no_scheme() -> None:
 
 # -- Link Card Creation Tests ------------------------------
 def test_create_link_card_svg_path(
-    monkeypatch: MonkeyPatch, mock_env: MockMacrosPlugin
+    monkeypatch: MonkeyPatch, mock_env: MockMacroEnv
 ) -> None:
     """Test link card creation with custom SVG path"""
 
@@ -190,7 +190,7 @@ def test_create_link_card_svg_path(
     assert "Custom" in result
 
 
-def test_create_link_card_invalid_svg_path(mock_env: MockMacrosPlugin) -> None:
+def test_create_link_card_invalid_svg_path(mock_env: MockMacroEnv) -> None:
     """Test link card creation with invalid SVG path format"""
     result = create_link_card(
         url="https://example.com",
@@ -211,7 +211,7 @@ def test_create_link_card_missing_title() -> None:
         create_link_card(url="https://example.com", title="")
 
 
-def test_create_link_card_external_no_image(mock_env: MockMacrosPlugin) -> None:
+def test_create_link_card_external_no_image(mock_env: MockMacroEnv) -> None:
     """Test external link card creation without an image"""
     result = create_link_card(
         url="https://example.com",
@@ -232,7 +232,7 @@ def test_create_link_card_no_env() -> None:
     assert "https://example.com" in result
 
 
-def test_create_link_card_with_absolute_image_path(mock_env: MockMacrosPlugin) -> None:
+def test_create_link_card_with_absolute_image_path(mock_env: MockMacroEnv) -> None:
     """Test link card creation with absolute image path"""
     result = create_link_card(
         url="https://example.com",
@@ -246,7 +246,7 @@ def test_create_link_card_with_absolute_image_path(mock_env: MockMacrosPlugin) -
 
 
 def test_create_link_card_full_options(
-    monkeypatch: MonkeyPatch, mock_env: MockMacrosPlugin
+    monkeypatch: MonkeyPatch, mock_env: MockMacroEnv
 ) -> None:
     """Test link card creation with all available options"""
 
@@ -282,12 +282,12 @@ def test_create_link_card_full_options(
 # -- Environment and Macro Tests ------------------------------
 def test_define_env() -> None:
     """Test environment setup and macro registration"""
-    mock_env = MockMacrosPlugin()
+    mock_env = MockMacroEnv()
     define_env(mock_env)
     assert hasattr(mock_env, "link_card")
 
 
-def test_link_card_macro(mock_env: MockMacrosPlugin) -> None:
+def test_link_card_macro(mock_env: MockMacroEnv) -> None:
     """Test the link_card macro functionality"""
     define_env(mock_env)
 

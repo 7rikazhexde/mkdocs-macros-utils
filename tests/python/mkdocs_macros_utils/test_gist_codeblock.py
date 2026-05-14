@@ -8,7 +8,7 @@ from pytest_mock import MockerFixture
 import requests
 from mkdocs_macros_utils.gist_codeblock import GistProcessor
 from mkdocs_macros_utils.debug_logger import DebugLogger
-from tests.python import MockMacrosPlugin
+from tests.python import MockMacroEnv
 
 
 # -- Language Detection Tests ------------------------------
@@ -217,7 +217,7 @@ def test_detect_language_from_content_exception_handling(mocker: MockerFixture) 
 
 # -- Macro Integration Tests ------------------------------
 def test_gist_codeblock_macro_complete(
-    monkeypatch: MonkeyPatch, env: MockMacrosPlugin, mock_response: Type[Any]
+    monkeypatch: MonkeyPatch, env: MockMacroEnv, mock_response: Type[Any]
 ) -> None:
     """Test complete macro functionality with successful case"""
     responses = [
@@ -241,7 +241,7 @@ def test_gist_codeblock_macro_complete(
 
 
 def test_gist_codeblock_with_options(
-    monkeypatch: MonkeyPatch, env: MockMacrosPlugin, mock_response: Type[Any]
+    monkeypatch: MonkeyPatch, env: MockMacroEnv, mock_response: Type[Any]
 ) -> None:
     """Test macro with indent and extension options"""
     responses = [
@@ -266,7 +266,7 @@ def test_gist_codeblock_with_options(
 
 
 def test_gist_codeblock_error_cases(
-    monkeypatch: MonkeyPatch, env: MockMacrosPlugin
+    monkeypatch: MonkeyPatch, env: MockMacroEnv
 ) -> None:
     """Test error cases in macro execution"""
 
@@ -284,7 +284,7 @@ def test_gist_codeblock_error_cases(
 
 
 def test_gist_codeblock_raw_url_none(
-    monkeypatch: MonkeyPatch, env: MockMacrosPlugin
+    monkeypatch: MonkeyPatch, env: MockMacroEnv
 ) -> None:
     """Test specific case where get_gist_info returns None for raw_url"""
     monkeypatch.setattr(
@@ -296,7 +296,7 @@ def test_gist_codeblock_raw_url_none(
 
 
 def test_gist_codeblock_special_chars(
-    monkeypatch: MonkeyPatch, env: MockMacrosPlugin, mock_response: Type[Any]
+    monkeypatch: MonkeyPatch, env: MockMacroEnv, mock_response: Type[Any]
 ) -> None:
     """Test handling of special characters in gist content"""
     responses = [
@@ -319,7 +319,7 @@ def test_gist_codeblock_special_chars(
 
 
 def test_gist_codeblock_multiline_content(
-    monkeypatch: MonkeyPatch, env: MockMacrosPlugin, mock_response: Type[Any]
+    monkeypatch: MonkeyPatch, env: MockMacroEnv, mock_response: Type[Any]
 ) -> None:
     """Test handling of multiline content with indentation"""
     responses = [
@@ -361,7 +361,7 @@ def test_fetch_gist_content_failure_with_error(
 
 
 def test_gist_codeblock_content_fetch_error(
-    monkeypatch: MonkeyPatch, env: MockMacrosPlugin, mock_response: Type[Any]
+    monkeypatch: MonkeyPatch, env: MockMacroEnv, mock_response: Type[Any]
 ) -> None:
     """Test gist_codeblock when fetch_gist_content returns error"""
     responses = [
@@ -383,7 +383,7 @@ def test_gist_codeblock_content_fetch_error(
 
 
 def test_gist_codeblock_fetch_content_returns_none(
-    monkeypatch: MonkeyPatch, env: MockMacrosPlugin
+    monkeypatch: MonkeyPatch, env: MockMacroEnv
 ) -> None:
     """Test case where fetch_gist_content returns None for content"""
 

@@ -6,9 +6,8 @@ from pathlib import Path
 import shutil
 import logging
 import os
-from mkdocs.config import Config
-from mkdocs.structure.files import Files
-from mkdocs_macros.plugin import MacrosPlugin
+from typing import Any, Dict
+from zensical.extensions.macros import MacroEnv
 
 from . import link_card
 from . import gist_codeblock
@@ -56,46 +55,59 @@ def copy_static_files(plugin_dir: Path, docs_dir: Path) -> None:
             logger.info(f"Copied static JS file: {js_file}")
 
 
-def on_files(files: Files, config: Config) -> Files:
+def _get_docs_dir() -> Path:
+    """Return the docs directory path.
+
+    Checks MKDOCS_DOCS_DIR env var first, then defaults to 'docs' relative to CWD.
     """
-    ビルド時のファイル処理
-
-    Args:
-        files (Files): MkDocsファイルコレクション
-        config (Config): MkDocs設定
-
-    Returns:
-        Files: 更新されたファイルコレクション
-    """
-    # macros-utilsディレクトリ内のファイルのみを有効にする
-    allowed_files = [
-        f for f in files if not str(f.src_path).startswith(MACROS_UTILS_DIR)
-    ]
-    allowed_files.extend(
-        [
-            f
-            for f in files
-            if str(f.src_path).startswith(os.path.join(MACROS_UTILS_DIR, ""))
-        ]
-    )
-    return allowed_files
+    docs_dir_env = os.environ.get("MKDOCS_DOCS_DIR", "docs")
+    path = Path(docs_dir_env)
+    if not path.is_absolute():
+        path = Path(os.getcwd()) / path
+    return path
 
 
-def define_env(env: MacrosPlugin) -> None:
+def _load_config() -> Dict[str, Any]:
+    """Load full config from mkdocs.yml or zensical config in CWD if available."""
+    cwd = Path(os.getcwd())
+    for config_name in ("mkdocs.yml", "mkdocs.yaml"):
+        config_path = cwd / config_name
+        if config_path.exists():
+            try:
+                import yaml  # type: ignore[import]
+
+                with open(config_path) as f:
+                    return dict(yaml.safe_load(f) or {})
+            except Exception:
+                pass
+    return {}
+
+
+def _load_extra_config() -> Dict[str, Any]:
+    """Load extra settings from mkdocs.yml or zensical config in CWD if available."""
+    return dict(_load_config().get("extra", {}))
+
+
+def define_env(env: MacroEnv) -> None:
     """
     MkDocsマクロプラグインの環境を定義する
     """
-    # プラグインのディレクトリを取得
     plugin_dir = Path(__file__).parent
 
     try:
-        # ドキュメントディレクトリを取得
-        docs_dir = Path(env.conf["docs_dir"])
+        docs_dir = _get_docs_dir()
 
-        # スタティックファイルをコピー
+        # Make config values available to sub-modules via env.variables
+        config = _load_config()
+        extra = dict(config.get("extra", {}))
+        if extra:
+            env.variables["extra"] = extra
+        site_url = str(config.get("site_url", ""))
+        if site_url:
+            env.variables["_site_url"] = site_url
+
         copy_static_files(plugin_dir, docs_dir)
 
-        # マクロを登録
         link_card.define_env(env)
         gist_codeblock.define_env(env)
         x_twitter_card.define_env(env)

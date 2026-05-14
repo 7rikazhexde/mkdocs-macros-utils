@@ -13,7 +13,7 @@ from mkdocs_macros_utils.x_twitter_card import (
     define_env,
 )
 from mkdocs_macros_utils.debug_logger import DebugLogger
-from tests.python import MockMacrosPlugin
+from tests.python import MockMacroEnv
 
 
 # -- URL Validation Tests ------------------------------
@@ -84,7 +84,7 @@ def test_standardize_twitter_url(mock_logger: DebugLogger) -> None:
 # -- Card Creation Tests ------------------------------
 
 
-def test_create_x_twitter_card_valid_url(mock_env: MockMacrosPlugin) -> None:
+def test_create_x_twitter_card_valid_url(mock_env: MockMacroEnv) -> None:
     """Test X/Twitter card creation with valid URL"""
     url = "https://twitter.com/user/status/123456789"
     result = create_x_twitter_card(url, mock_env)
@@ -95,7 +95,7 @@ def test_create_x_twitter_card_valid_url(mock_env: MockMacrosPlugin) -> None:
     assert f'<a href="{url}"></a>' in result
 
 
-def test_create_x_twitter_card_standardize_url(mock_env: MockMacrosPlugin) -> None:
+def test_create_x_twitter_card_standardize_url(mock_env: MockMacroEnv) -> None:
     """Test X/Twitter card creation with x.com URL"""
     x_url = "https://x.com/user/status/123456789"
     twitter_url = "https://twitter.com/user/status/123456789"
@@ -106,7 +106,7 @@ def test_create_x_twitter_card_standardize_url(mock_env: MockMacrosPlugin) -> No
     assert f'<a href="{twitter_url}"></a>' in result
 
 
-def test_create_x_twitter_card_invalid_url(mock_env: MockMacrosPlugin) -> None:
+def test_create_x_twitter_card_invalid_url(mock_env: MockMacroEnv) -> None:
     """Test X/Twitter card creation with invalid URL"""
     with pytest.raises(ValueError, match="Invalid X/Twitter URL"):
         create_x_twitter_card("https://example.com", mock_env)
@@ -127,14 +127,14 @@ def test_create_x_twitter_card_no_env() -> None:
 
 def test_define_env() -> None:
     """Test environment setup and macro registration"""
-    mock_env = MockMacrosPlugin()
+    mock_env = MockMacroEnv()
     define_env(mock_env)
     assert hasattr(mock_env, "x_twitter_card")
 
 
 def test_x_twitter_card_macro() -> None:
     """Test the x_twitter_card macro functionality"""
-    mock_env = MockMacrosPlugin()
+    mock_env = MockMacroEnv()
     define_env(mock_env)
 
     # Type cast to tell mypy that the attribute exists after define_env

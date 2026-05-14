@@ -1,7 +1,7 @@
 """
 Tests for MkDocs Macros Utils initialization module.
 This module tests the functionality of the package's __init__.py,
-including static file copying, file processing, and environment setup.
+including static file copying and environment setup.
 """
 
 import os
@@ -10,17 +10,14 @@ from pathlib import Path
 import pytest
 from _pytest.logging import LogCaptureFixture
 from pytest import MonkeyPatch
-from mkdocs.config import Config
-from mkdocs.structure.files import File, Files
 from mkdocs_macros_utils import (
     copy_static_files,
-    on_files,
     define_env,
     MACROS_UTILS_DIR,
     MACROS_UTILS_CSS,
     MACROS_UTILS_JS,
 )
-from tests.python import MockMacrosPlugin
+from tests.python import MockMacroEnv
 
 
 @pytest.fixture(autouse=True)
@@ -102,49 +99,12 @@ def test_copy_static_files_update_only_newer(
     )
 
 
-# -- File Processing Tests ------------------------------
-def test_on_files() -> None:
-    """Test file processing during build"""
-    # Create mock files
-    files = Files(
-        [
-            File(
-                path="test.md", src_dir="docs", dest_dir="site", use_directory_urls=True
-            ),
-            File(
-                path=f"{MACROS_UTILS_DIR}/style.css",
-                src_dir="docs",
-                dest_dir="site",
-                use_directory_urls=True,
-            ),
-            File(
-                path="other/file.md",
-                src_dir="docs",
-                dest_dir="site",
-                use_directory_urls=True,
-            ),
-        ]
-    )
-
-    config = Config(schema=[])
-    result = on_files(files, config)
-
-    # Normalize paths to use forward slashes for consistent comparison
-    paths = [f.src_path.replace("\\", "/") for f in result]
-    expected_style_css = f"{MACROS_UTILS_DIR}/style.css".replace("\\", "/")
-
-    # Verify files are processed correctly
-    assert "test.md" in paths
-    assert expected_style_css in paths
-    assert "other/file.md" in paths
-
-
 # -- Environment Setup Tests ------------------------------
 def test_define_env_success(
     tmp_path: Path, caplog: LogCaptureFixture, monkeypatch: MonkeyPatch
 ) -> None:
     """Test successful environment setup"""
-    mock_env = MockMacrosPlugin(conf={"docs_dir": str(tmp_path)})
+    mock_env = MockMacroEnv()
 
     # Create necessary plugin directory structure
     plugin_dir = tmp_path / "plugin"
@@ -157,8 +117,10 @@ def test_define_env_success(
     for js_file in MACROS_UTILS_JS:
         (plugin_dir / "static" / "js" / js_file).write_text("/* JS */")
 
-    # Monkeypatch __file__ for plugin directory detection
+    # Monkeypatch plugin directory and docs directory
     monkeypatch.setattr("mkdocs_macros_utils.__file__", str(plugin_dir / "__init__.py"))
+    monkeypatch.setattr("mkdocs_macros_utils._get_docs_dir", lambda: tmp_path / "docs")
+    monkeypatch.setattr("mkdocs_macros_utils._load_extra_config", lambda: {})
 
     with caplog.at_level(logging.INFO):
         define_env(mock_env)
@@ -169,9 +131,19 @@ def test_define_env_success(
     assert hasattr(mock_env, "x_twitter_card")
 
 
-def test_define_env_failure(caplog: LogCaptureFixture) -> None:
+def test_define_env_failure(
+    caplog: LogCaptureFixture, monkeypatch: MonkeyPatch
+) -> None:
     """Test environment setup failure handling"""
-    mock_env = MockMacrosPlugin(conf={})  # Missing docs_dir
+    mock_env = MockMacroEnv()
+
+    # Make copy_static_files raise to trigger the error path
+    monkeypatch.setattr("mkdocs_macros_utils._get_docs_dir", lambda: Path("/nonexistent/readonly"))
+    monkeypatch.setattr("mkdocs_macros_utils._load_extra_config", lambda: {})
+    monkeypatch.setattr(
+        "mkdocs_macros_utils.copy_static_files",
+        lambda *args: (_ for _ in ()).throw(RuntimeError("Simulated failure")),
+    )
 
     with caplog.at_level(logging.ERROR):
         define_env(mock_env)

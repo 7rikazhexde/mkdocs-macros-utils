@@ -1,6 +1,6 @@
 # mkdocs-macros-utils
 
-[mkdocs-macros-utils](https://7rikazhexde.github.io/mkdocs-macros-utils/) is [mkdocs-macros-plugin](https://mkdocs-macros-plugin.readthedocs.io/en/latest/) based project that provides macros to extend cards, code blocks, etc, in MkDocs documents.
+[mkdocs-macros-utils](https://7rikazhexde.github.io/mkdocs-macros-utils/) is a [zensical](https://zensical.org/)-based project that provides macros to extend cards, code blocks, etc, in MkDocs documents.
 
 [![pages-build-deployment](https://github.com/7rikazhexde/mkdocs-macros-utils/actions/workflows/pages/pages-build-deployment/badge.svg?branch=gh-pages)](https://github.com/7rikazhexde/mkdocs-macros-utils/actions/workflows/pages/pages-build-deployment) [![DOCS](https://img.shields.io/badge/Docs-Click%20Here-blue?colorA=24292e&colorB=0366d6&logo=github)](https://7rikazhexde.github.io/mkdocs-macros-utils/)
 
@@ -18,22 +18,18 @@
 # For pip
 pip install mkdocs-macros-utils
 
-# For poetry
-poetry add mkdocs-macros-utils
+# For uv
+uv add mkdocs-macros-utils
 ```
 
 ### Config settings
 
-1. Add the plugin to your `mkdocs.yml`
+1. Add the extension to your `mkdocs.yml`
 
     ```yaml
-    plugins:
-      - macros:
-          modules: [mkdocs_macros_utils]
-
     markdown_extensions:
-      - attr_list
-      - md_in_html
+      - zensical.extensions.macros:
+          modules: [mkdocs_macros_utils]
 
     extra:
       debug:
@@ -53,7 +49,7 @@ poetry add mkdocs-macros-utils
 1. Start the development server
 
     ```bash
-    poetry run mkdocs serve
+    uv run zensical serve
     ```
 
 The plugin will automatically create the required directories and copy CSS/JS files during the build process.

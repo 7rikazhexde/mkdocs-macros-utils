@@ -1,3 +1,3 @@
-from python.conftest import MockMacrosPlugin
+from python.conftest import MockMacroEnv
 
-__all__ = ["MockMacrosPlugin"]
+__all__ = ["MockMacroEnv"]

@@ -3,7 +3,7 @@ MkDocs Macros Plugin for displaying X/Twitter link cards.
 """
 
 from typing import Optional
-from mkdocs_macros.plugin import MacrosPlugin
+from zensical.extensions.macros import MacroEnv
 import re
 
 # Import debug logger
@@ -54,13 +54,13 @@ def standardize_twitter_url(url: str, logger: DebugLogger) -> str:
     return standardized_url
 
 
-def create_x_twitter_card(url: str, env: Optional[MacrosPlugin] = None) -> str:
+def create_x_twitter_card(url: str, env: Optional[MacroEnv] = None) -> str:
     """
     Generate widget HTML from X tweet URL
 
     Args:
         url (str): X tweet URL
-        env (Optional[MacrosPlugin], optional): MkDocs macro environment
+        env (Optional[MacroEnv], optional): MkDocs macro environment
 
     Returns:
         str: Widget HTML
@@ -91,12 +91,12 @@ def create_x_twitter_card(url: str, env: Optional[MacrosPlugin] = None) -> str:
     return html
 
 
-def define_env(env: MacrosPlugin) -> None:
+def define_env(env: MacroEnv) -> None:
     """
     Define x_twitter_card macro in MkDocs macro environment
 
     Args:
-        env (MacrosPlugin): Macro plugin environment
+        env (MacroEnv): Macro plugin environment
     """
 
     @env.macro

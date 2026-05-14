@@ -5,7 +5,7 @@ MkDocs Macros Plugin for displaying custom link cards.
 from typing import Optional
 from urllib.parse import urlparse
 import requests
-from mkdocs_macros.plugin import MacrosPlugin
+from zensical.extensions.macros import MacroEnv
 
 # Import debug logger
 from .debug_logger import DebugLogger
@@ -124,7 +124,7 @@ def create_link_card(
     domain: Optional[str] = None,
     external: bool = False,
     svg_path: Optional[str] = None,
-    env: Optional[MacrosPlugin] = None,
+    env: Optional[MacroEnv] = None,
 ) -> str:
     """
     Create a link card
@@ -137,7 +137,7 @@ def create_link_card(
         domain (Optional[str], optional): Domain name. Auto-extracted from URL if not specified.
         external (bool, optional): External link flag. Defaults to False.
         svg_path (Optional[str], optional): Custom SVG path in format "user_id/gist_id/filename". Defaults to None.
-        env (Optional[MacrosPlugin], optional): MkDocs macro environment. Defaults to None.
+        env (Optional[MacroEnv], optional): MkDocs macro environment. Defaults to None.
 
     Returns:
         str: Rendered link card HTML
@@ -158,8 +158,11 @@ def create_link_card(
 
     # Get the base URL of the site
     base_url = ""
-    if env and hasattr(env, "conf"):
-        base_url = env.conf.get("site_url", "")
+    if env:
+        if hasattr(env, "conf"):
+            base_url = env.conf.get("site_url", "")  # type: ignore[attr-defined]
+        elif hasattr(env, "variables"):
+            base_url = str(env.variables.get("_site_url", ""))
 
     # Determine image path
     if external and not image_path:
@@ -244,12 +247,12 @@ def create_link_card(
     return html
 
 
-def define_env(env: MacrosPlugin) -> None:
+def define_env(env: MacroEnv) -> None:
     """
     Define link_card macro in MkDocs macro environment
 
     Args:
-        env (MacrosPlugin): Macro plugin environment
+        env (MacroEnv): Macro plugin environment
     """
 
     @env.macro

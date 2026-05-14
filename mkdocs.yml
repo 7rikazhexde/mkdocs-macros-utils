@@ -7,7 +7,7 @@ repo_url: https://github.com/7rikazhexde/mkdocs-macros-utils/
 copyright: "&copy; 2025 7rikazhexde"
 
 theme:
-  name: material
+  variant: classic
   custom_dir: overrides
   palette:
     # Light Mode
@@ -40,11 +40,11 @@ theme:
 
 plugins:
   - search
-  - macros:
-      modules: [mkdocs_macros_utils]
   #- tags
 
 markdown_extensions:
+  - zensical.extensions.macros:
+      modules: [mkdocs_macros_utils]
   - footnotes
     # For Admonition
   - admonition

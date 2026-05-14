@@ -10,19 +10,17 @@ from mkdocs_macros_utils.debug_logger import DebugLogger
 from mkdocs_macros_utils.gist_codeblock import GistProcessor, define_env
 
 
-class MockMacrosPlugin:
-    """Mock class for MkDocs Macros Plugin
+class MockMacroEnv:
+    """Mock class for zensical MacroEnv
 
-    This class simulates the behavior of the MkDocs Macros Plugin for testing purposes.
+    This class simulates the behavior of the zensical MacroEnv for testing purposes.
     It can be configured with custom debug settings and site configuration.
     """
 
     def __init__(
         self,
-        conf: Optional[Dict[str, str]] = None,
         debug_settings: Optional[Dict[str, Any]] = None,
     ) -> None:
-        self.conf = conf or {}
         self.default_settings = {
             "extra": {
                 "debug": {
@@ -32,12 +30,9 @@ class MockMacrosPlugin:
                 }
             }
         }
-        self._variables = debug_settings or self.default_settings
-
-    @property
-    def variables(self) -> Dict[str, Any]:
-        """Get plugin variables"""
-        return self._variables
+        self.variables: Dict[str, Any] = debug_settings or dict(self.default_settings)
+        self.macros: Dict[str, Callable[..., Any]] = {}
+        self.filters: Dict[str, Callable[..., Any]] = {}
 
     def macro(self, f: Callable[..., str]) -> Callable[..., str]:
         """Register a macro function
@@ -49,7 +44,13 @@ class MockMacrosPlugin:
             Function: The registered macro function
         """
         macro_name = f.__name__
+        self.macros[macro_name] = f
         setattr(self, macro_name, f)
+        return f
+
+    def filter(self, f: Callable[..., Any]) -> Callable[..., Any]:
+        """Register a filter function"""
+        self.filters[f.__name__] = f
         return f
 
 
@@ -64,24 +65,25 @@ def mock_logger() -> DebugLogger:
 
 
 @pytest.fixture
-def mock_env() -> MockMacrosPlugin:
-    """Mock environment fixture with default site URL configuration
+def mock_env() -> MockMacroEnv:
+    """Mock environment fixture with default debug configuration and site URL
 
     Returns:
-        MockMacrosPlugin: A configured mock plugin instance
+        MockMacroEnv: A configured mock env instance
     """
-    mock_plugin = MockMacrosPlugin({"site_url": "https://example.com/"})
-    return mock_plugin
+    env = MockMacroEnv()
+    env.variables["_site_url"] = "https://example.com/"
+    return env
 
 
 @pytest.fixture
-def env() -> MockMacrosPlugin:
-    """MkDocs macro plugin fixture for gist codeblock testing
+def env() -> MockMacroEnv:
+    """MacroEnv fixture for gist codeblock testing
 
     Returns:
-        MockMacrosPlugin: A configured mock plugin instance with gist_codeblock macro
+        MockMacroEnv: A configured mock env with gist_codeblock macro registered
     """
-    plugin = MockMacrosPlugin()
+    plugin = MockMacroEnv()
     define_env(plugin)
     return plugin
 
