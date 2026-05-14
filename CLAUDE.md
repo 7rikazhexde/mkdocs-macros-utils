@@ -53,7 +53,7 @@ uv run zensical build
 
 ### Linting & Type Checking
 
-Pre-commit runs ruff, mypy, markdownlint, and several other checks. To run manually:
+Pre-commit runs ruff, mypy, and several other checks. To run manually:
 
 ```sh
 uv run ruff check .             # Lint

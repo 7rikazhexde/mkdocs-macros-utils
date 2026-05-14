@@ -138,7 +138,9 @@ def test_define_env_failure(
     mock_env = MockMacroEnv()
 
     # Make copy_static_files raise to trigger the error path
-    monkeypatch.setattr("mkdocs_macros_utils._get_docs_dir", lambda: Path("/nonexistent/readonly"))
+    monkeypatch.setattr(
+        "mkdocs_macros_utils._get_docs_dir", lambda: Path("/nonexistent/readonly")
+    )
     monkeypatch.setattr("mkdocs_macros_utils._load_extra_config", lambda: {})
     monkeypatch.setattr(
         "mkdocs_macros_utils.copy_static_files",

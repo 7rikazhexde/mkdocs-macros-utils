@@ -74,7 +74,7 @@ def _load_config() -> Dict[str, Any]:
         config_path = cwd / config_name
         if config_path.exists():
             try:
-                import yaml  # type: ignore[import]
+                import yaml
 
                 with open(config_path) as f:
                     return dict(yaml.safe_load(f) or {})

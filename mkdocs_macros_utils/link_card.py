@@ -160,7 +160,7 @@ def create_link_card(
     base_url = ""
     if env:
         if hasattr(env, "conf"):
-            base_url = env.conf.get("site_url", "")  # type: ignore[attr-defined]
+            base_url = env.conf.get("site_url", "")
         elif hasattr(env, "variables"):
             base_url = str(env.variables.get("_site_url", ""))
 

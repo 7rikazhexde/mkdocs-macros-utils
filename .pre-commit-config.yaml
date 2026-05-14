@@ -23,54 +23,12 @@ repos:
         # Exclude check for "could not determine a constructor for the tag 'tag:yaml.org,2002:python/name:materialx.emoji.twemoji'"
         args: [--unsafe]
 
-  # https://python-poetry.org/docs/pre-commit-hooks/#usage
-  - repo: https://github.com/python-poetry/poetry
-    rev: 2.4.0
+  # https://github.com/astral-sh/uv-pre-commit
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.7.2
     hooks:
-      - id: poetry-check
+      - id: uv-lock
         verbose: true
-      - id: poetry-lock
-        verbose: true
-
-  # [Note] poetry export is not done in pre-commit, but in GitHub Actions (update-requirements-after-dependabot.yml)
-  # https://github.com/python-poetry/poetry-plugin-export?tab=readme-ov-file#usage
-  #- repo: https://github.com/python-poetry/poetry-plugin-export.git
-  #  rev: 1.9.0
-  #  hooks:
-  #    - id: poetry-export
-  #      args: ["-f", "requirements.txt", "-o", "requirements.txt", "--without-hashes"]
-  #      verbose: true
-  #      files: ^pyproject\.toml$
-  #    - id: poetry-export
-  #      args: ["--with", "dev", "-f", "requirements.txt", "-o", "requirements-dev.txt", "--without-hashes"]
-  #      verbose: true
-  #      files: ^pyproject\.toml$
-
-  # https://github.com/shellcheck-py/shellcheck-py?tab=readme-ov-file#usage
-  - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.11.0.1
-    hooks:
-      - id: shellcheck
-
-  - repo: https://github.com/rhysd/actionlint
-    rev: v1.7.12
-    hooks:
-      - id: actionlint
-
-  # Reference: https://github.com/DavidAnson/markdownlint-cli2#overview
-  # > markdownlint-cli is a traditional command-line interface for markdownlint.
-  - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.48.0
-    hooks:
-      - id: markdownlint
-        args: [
-          "--config",
-          ".markdownlint.jsonc",
-          "--ignore",
-          "templates/**/*.md",
-          "README.md",
-          "docs/**/*.md"
-        ]
 
   - repo: https://github.com/charliermarsh/ruff-pre-commit
     rev: v0.15.12
