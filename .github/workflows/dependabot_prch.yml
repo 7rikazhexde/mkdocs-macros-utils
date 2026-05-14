@@ -4,22 +4,21 @@ name: Dependabot PR Check
 # 1. トリガー条件:
 #    - mainブランチへのプルリクエスト時
 #    - Dependabotによる実行であること
-#    - コミットメッセージが"Bump version"で始まっていないこと
+#    - コミットメセージが"Bump version"で始まっていないこと
 # 2. ジョブの条件判定: Dependabot によるPRであることをチェック
 # 3. OS毎の環境設定 (macos-latest, ubuntu-latest, windows-latest)
 # 4. Python環境のセットアップ (3.11, 3.12)
 # 5. タイムゾーンの設定 (Asia/Tokyo)
 # 6. リポジトリのチェックアウト
-# 7. Poetry のインストール
-# 8. 依存関係のキャッシュ
-# 9. プロジェクト依存関係のインストール
-# 10. テストの実行とカバレッジの計算
-# 11. カバレッジが90%以上であることのチェック
-# 12. テスト結果とカバレッジレポートの生成
-# 13. テスト結果の確認と警告の表示
-# 14. ジョブサマリーの作成
-# 15. 全テストの結果確認
-# 16. Discord Webhookの送信
+# 7. uv のインストール
+# 8. 依存関係のインストール
+# 9. テストの実行とカバレッジの計算
+# 10. カバレッジが90%以上であることのチェック
+# 11. テスト結果とカバレッジレポートの生成
+# 12. テスト結果の確認と警告の表示
+# 13. ジョブサマリーの作成
+# 14. 全テストの結果確認
+# 15. Discord Webhookの送信
 
 on:
   pull_request:
@@ -82,25 +81,18 @@ jobs:
           echo "System date: $(date)"
           echo "TZ environment variable: ${TZ}"
           python -c "import datetime, platform; print(f'Python timezone: {datetime.datetime.now().astimezone().tzinfo}'); print(f'OS: {platform.system()}')"
-      - name: Install poetry
-        run: pip install poetry
-      - name: Cache dependencies
-        uses: actions/cache@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
         with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          enable-caching: true
       - name: Install dependencies
-        shell: bash
-        run: |
-          rm -f poetry.lock
-          poetry lock
-          poetry install
+        run: uv sync
       - name: Run test
         shell: bash
         id: pytest
         run: |
-          poetry run task testcixml
-          coverage_percentage=$(poetry run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
+          uv run task testcixml
+          coverage_percentage=$(uv run coverage report | grep TOTAL | awk '{print $NF}' | sed 's/%//')
           echo "Current coverage: ${coverage_percentage}%"
           echo "COVERAGE=${coverage_percentage}" >> "$GITHUB_ENV"
       - name: Check coverage

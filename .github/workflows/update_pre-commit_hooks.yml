@@ -17,21 +17,18 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.13"
-      - name: Install poetry
-        run: pip install poetry
-      - name: Cache dependencies
-        uses: actions/cache@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
         with:
-          path: ~/.cache/pypoetry
-          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          enable-caching: true
       - name: Install dependencies
-        run: poetry install
+        run: uv sync
 
       # Update pre-commit hooks and check for changes
       - name: Update pre-commit hooks
         id: update_hooks
         run: |
-          poetry run pre-commit autoupdate
+          uv run pre-commit autoupdate
           if git diff --exit-code .pre-commit-config.yaml; then
             echo "has_updates=false" >> "$GITHUB_OUTPUT"
             echo "No updates to pre-commit hooks. Exiting workflow."
